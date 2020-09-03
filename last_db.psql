@@ -1,0 +1,1779 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.12 (Ubuntu 10.12-2.pgdg18.04+1)
+-- Dumped by pg_dump version 10.12 (Ubuntu 10.12-2.pgdg18.04+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: answers; Type: TABLE; Schema: public; Owner: tiziano
+--
+
+CREATE TABLE public.answers (
+    path_to_wav character varying(150) NOT NULL,
+    word character varying(10) NOT NULL,
+    "time" double precision NOT NULL,
+    number integer NOT NULL,
+    truth boolean NOT NULL,
+    test_id integer NOT NULL,
+    id integer NOT NULL,
+    question_id integer,
+    q_time double precision
+);
+
+
+ALTER TABLE public.answers OWNER TO tiziano;
+
+--
+-- Name: answers_id_seq; Type: SEQUENCE; Schema: public; Owner: tiziano
+--
+
+CREATE SEQUENCE public.answers_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.answers_id_seq OWNER TO tiziano;
+
+--
+-- Name: answers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: tiziano
+--
+
+ALTER SEQUENCE public.answers_id_seq OWNED BY public.answers.id;
+
+
+--
+-- Name: q_times; Type: TABLE; Schema: public; Owner: tiziano
+--
+
+CREATE TABLE public.q_times (
+    "time" double precision NOT NULL,
+    question_id integer NOT NULL,
+    test_id integer NOT NULL,
+    "position" integer
+);
+
+
+ALTER TABLE public.q_times OWNER TO tiziano;
+
+--
+-- Name: question_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: tiziano
+--
+
+CREATE SEQUENCE public.question_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 2147483647
+    CACHE 1;
+
+
+ALTER TABLE public.question_groups_id_seq OWNER TO tiziano;
+
+--
+-- Name: question_groups; Type: TABLE; Schema: public; Owner: tiziano
+--
+
+CREATE TABLE public.question_groups (
+    id integer DEFAULT nextval('public.question_groups_id_seq'::regclass) NOT NULL,
+    "group" character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.question_groups OWNER TO tiziano;
+
+--
+-- Name: questions_id_seq; Type: SEQUENCE; Schema: public; Owner: tiziano
+--
+
+CREATE SEQUENCE public.questions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 2147483647
+    CACHE 1;
+
+
+ALTER TABLE public.questions_id_seq OWNER TO tiziano;
+
+--
+-- Name: questions; Type: TABLE; Schema: public; Owner: tiziano
+--
+
+CREATE TABLE public.questions (
+    id integer DEFAULT nextval('public.questions_id_seq'::regclass) NOT NULL,
+    path_to_wav character varying(100),
+    group_id integer NOT NULL
+);
+
+
+ALTER TABLE public.questions OWNER TO tiziano;
+
+--
+-- Name: tests_id_seq; Type: SEQUENCE; Schema: public; Owner: tiziano
+--
+
+CREATE SEQUENCE public.tests_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 2147483647
+    CACHE 1;
+
+
+ALTER TABLE public.tests_id_seq OWNER TO tiziano;
+
+--
+-- Name: tests; Type: TABLE; Schema: public; Owner: tiziano
+--
+
+CREATE TABLE public.tests (
+    id integer DEFAULT nextval('public.tests_id_seq'::regclass) NOT NULL,
+    path_to_media character varying(150) NOT NULL,
+    ball_position integer NOT NULL,
+    truth boolean NOT NULL,
+    number integer
+);
+
+
+ALTER TABLE public.tests OWNER TO tiziano;
+
+--
+-- Name: answers id; Type: DEFAULT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.answers ALTER COLUMN id SET DEFAULT nextval('public.answers_id_seq'::regclass);
+
+
+--
+-- Data for Name: answers; Type: TABLE DATA; Schema: public; Owner: tiziano
+--
+
+COPY public.answers (path_to_wav, word, "time", number, truth, test_id, id, question_id, q_time) FROM stdin;
+../output/tests/test_100_1/0_trim.wav	yes	471.879000000000019	1	t	269	6445	\N	467.980000000000018
+../output/tests/test_100_1/1_trim.wav	yes	474.406999999999982	2	t	269	6446	\N	473.130999999999972
+../output/tests/test_100_1/2_trim.wav	no	478.451000000000022	3	t	269	6447	\N	475.488
+../output/tests/test_100_1/3_trim.wav	no	482.396999999999991	4	t	269	6448	\N	480.040999999999997
+../output/tests/test_100_1/4_trim.wav	no	485.440999999999974	5	t	269	6449	\N	483.492000000000019
+../output/tests/test_100_1/5_no_trim.wav	no	489.783000000000015	6	t	269	6450	\N	486.850000000000023
+../output/tests/test_100_1/6_yes_trim.wav	yes	495.055000000000007	7	f	269	6451	\N	491.228000000000009
+../output/tests/test_100_1/7_yes_trim.wav	yes	497.771000000000015	8	t	269	6452	\N	496.177000000000021
+../output/tests/test_100_1/8_trim.wav	yes	501.601999999999975	9	f	269	6453	\N	499.596000000000004
+../output/tests/test_100_1/9_no_trim.wav	no	504.619000000000028	10	t	269	6454	\N	502.940999999999974
+../output/tests/test_101_1/0_trim.wav	no	528.793000000000006	1	t	219	6455	\N	525.946000000000026
+../output/tests/test_101_1/1_trim.wav	no	531.924999999999955	2	t	219	6456	\N	529.998000000000047
+../output/tests/test_101_1/2_trim.wav	yes	534.296000000000049	3	t	219	6457	\N	533.035999999999945
+../output/tests/test_101_1/3_trim.wav	no	537.057999999999993	4	t	219	6458	\N	535.378000000000043
+../output/tests/test_101_1/4_no_trim.wav	no	539.912000000000035	5	f	219	6459	\N	538.321000000000026
+../output/tests/test_101_1/5_trim.wav	yes	544.350999999999999	6	f	219	6460	\N	541.383000000000038
+../output/tests/test_101_1/6_trim.wav	yes	549.065000000000055	7	f	219	6461	\N	545.253000000000043
+../output/tests/test_101_1/7_yes_trim.wav	yes	552.961999999999989	8	t	219	6462	\N	549.918999999999983
+../output/tests/test_101_1/8_yes_trim.wav	yes	556.912000000000035	9	f	219	6463	\N	553.980999999999995
+../output/tests/test_101_1/9_no_trim.wav	no	561.301000000000045	10	f	219	6464	\N	558.642000000000053
+../output/tests/test_10_f/0_f_yes_trim.wav	yes	588.05600000000004	1	f	9	6465	\N	585.008000000000038
+../output/tests/test_10_f/1_f_no_trim.wav	no	596.557999999999993	2	f	9	6466	\N	594.089000000000055
+../output/tests/test_10_f/3_f_yes_trim.wav	yes	623.491999999999962	4	f	9	6468	\N	621.903999999999996
+../output/tests/test_10_f/4_f_no_trim.wav	no	628.743000000000052	5	f	9	6469	\N	626.364000000000033
+../output/tests/test_10_f/6_f_no_trim.wav	no	639.913000000000011	7	f	9	6471	\N	637.908999999999992
+../output/tests/test_10_f/7_f_yes_trim.wav	yes	646.56899999999996	8	f	9	6472	\N	644.905999999999949
+../output/tests/test_10_f/8_f_no_trim.wav	no	653.743000000000052	9	f	9	6473	\N	649.93100000000004
+../output/tests/test_10_f/9_f_yes_trim.wav	yes	657.855000000000018	10	f	9	6474	\N	655.913000000000011
+../output/tests/test_11_f/0_f_yes_trim.wav	yes	700.092999999999961	1	f	5	6475	\N	697.421000000000049
+../output/tests/test_11_f/1_f_no_trim.wav	no	704.365000000000009	2	f	5	6476	\N	702.678999999999974
+../output/tests/test_11_f/2_f_yes_trim.wav	yes	709.495000000000005	3	f	5	6477	\N	707.903999999999996
+../output/tests/test_11_f/4_f_yes_trim.wav	yes	717.817000000000007	5	f	5	6479	\N	714.823999999999955
+../output/tests/test_11_f/5_f_no_trim.wav	no	723.636999999999944	6	f	5	6480	\N	720.597999999999956
+../output/tests/test_11_f/6_f_yes_trim.wav	yes	729.750999999999976	7	f	5	6481	\N	726.914999999999964
+../output/tests/test_11_f/7_f_yes_trim.wav	yes	734.273000000000025	8	f	5	6482	\N	731.576999999999998
+../output/tests/test_11_f/8_f_yes_trim.wav	yes	741.890999999999963	9	f	5	6483	\N	738.919999999999959
+../output/tests/test_11_f/9_f_yes_trim.wav	yes	747.30499999999995	10	f	5	6484	\N	744.913000000000011
+../output/tests/test_12_f/0_f_yes_trim.wav	yes	792.433999999999969	1	f	11	6485	\N	788.611999999999966
+../output/tests/test_12_f/1_f_yes_trim.wav	yes	796.451999999999998	2	f	11	6486	\N	793.986999999999966
+../output/tests/test_12_f/2_f_no_trim.wav	no	801.44399999999996	3	f	11	6487	\N	798.460000000000036
+../output/tests/test_12_f/3_f_yes_trim.wav	yes	805.998000000000047	4	f	11	6488	\N	803.022000000000048
+../output/tests/test_12_f/4_f_yes_trim.wav	yes	809.596000000000004	5	f	11	6489	\N	807.905999999999949
+../output/tests/test_12_f/5_f_yes_trim.wav	yes	813.201999999999998	6	f	11	6490	\N	811.254999999999995
+../output/tests/test_12_f/6_f_yes_trim.wav	yes	817.634999999999991	7	f	11	6491	\N	814.918999999999983
+../output/tests/test_12_f/8_f_no_trim.wav	no	832.732999999999947	9	f	11	6493	\N	828.92999999999995
+../output/tests/test_12_f/9_f_no_trim.wav	no	837.55600000000004	10	f	11	6494	\N	834.500999999999976
+../output/tests/test_13_t/0_t_yes_trim.wav	yes	871.919999999999959	1	t	25	6495	\N	870.229000000000042
+../output/tests/test_13_t/1_t_yes_trim.wav	yes	877.172000000000025	2	t	25	6496	\N	873.370999999999981
+../output/tests/test_13_t/2_t_no_trim.wav	no	880.422000000000025	3	t	25	6497	\N	878.822999999999979
+../output/tests/test_13_t/3_t_yes_trim.wav	yes	884.850000000000023	4	t	25	6498	\N	881.919999999999959
+../output/tests/test_13_t/4_t_yes_trim.wav	yes	886.94500000000005	5	t	25	6499	\N	885.66700000000003
+../output/tests/test_13_t/5_t_no_trim.wav	no	890.914999999999964	6	t	25	6500	\N	888.908999999999992
+../output/tests/test_13_t/6_t_no_trim.wav	no	897.761999999999944	7	t	25	6501	\N	893.92999999999995
+../output/tests/test_13_t/7_t_yes_trim.wav	yes	903.758000000000038	8	t	25	6502	\N	900.918999999999983
+../output/tests/test_13_t/8_t_no_trim.wav	no	913.384999999999991	9	t	25	6503	\N	910.913999999999987
+../output/tests/test_13_t/9_t_no_trim.wav	no	917.990999999999985	10	t	25	6504	\N	914.921000000000049
+../output/tests/test_14_t/1_t_yes_trim.wav	yes	954.024000000000001	2	t	44	6506	\N	951.05600000000004
+../output/tests/test_14_t/2_t_no_trim.wav	no	958.063999999999965	3	t	44	6507	\N	955.22199999999998
+../output/tests/test_14_t/3_t_no_trim.wav	no	962.453999999999951	4	t	44	6508	\N	959.490000000000009
+../output/tests/test_14_t/4_t_no_trim.wav	no	965.913000000000011	5	t	44	6509	\N	963.908999999999992
+../output/tests/test_14_t/5_t_no_trim.wav	no	968.738000000000056	6	t	44	6510	\N	967.057000000000016
+../output/tests/test_14_t/6_t_no_trim.wav	no	972.578999999999951	7	t	44	6511	\N	969.918999999999983
+../output/tests/test_14_t/7_t_no_trim.wav	no	981.727999999999952	8	t	44	6512	\N	977.92999999999995
+../output/tests/test_14_t/8_t_no_trim.wav	no	985.970000000000027	9	t	44	6513	\N	982.921000000000049
+../output/tests/test_14_t/9_t_yes_trim.wav	yes	993.840000000000032	10	t	44	6514	\N	991.908000000000015
+../output/tests/test_15_f/0_f_yes_trim.wav	yes	1020.13	1	f	38	6515	\N	1017.75999999999999
+../output/tests/test_15_f/1_f_yes_trim.wav	yes	1023.61000000000001	2	f	38	6516	\N	1022.01999999999998
+../output/tests/test_15_f/2_f_no_trim.wav	no	1026.96000000000004	3	f	38	6517	\N	1025.26999999999998
+../output/tests/test_15_f/3_f_yes_trim.wav	yes	1030.90000000000009	4	f	38	6518	\N	1028.51999999999998
+../output/tests/test_15_f/4_f_yes_trim.wav	yes	1035.52999999999997	5	f	38	6519	\N	1032.58999999999992
+../output/tests/test_15_f/5_f_no_trim.wav	no	1039.96000000000004	6	f	38	6520	\N	1036.92000000000007
+../output/tests/test_15_f/6_f_yes_trim.wav	yes	1043.83999999999992	7	f	38	6521	\N	1040.77999999999997
+../output/tests/test_15_f/7_f_yes_trim.wav	yes	1047.59999999999991	8	f	38	6522	\N	1044.75
+../output/tests/test_15_f/8_f_yes_trim.wav	yes	1050.8900000000001	9	f	38	6523	\N	1049
+../output/tests/test_15_f/9_f_no_trim.wav	no	1056.91000000000008	10	f	38	6524	\N	1053.92000000000007
+../output/tests/test_16_t/1_t_no_trim.wav	no	1191.21000000000004	2	t	27	6526	\N	1189.6099999999999
+../output/tests/test_16_t/4_t_yes_trim.wav	yes	1211.6099999999999	5	t	27	6529	\N	1208.6099999999999
+../output/tests/test_16_t/5_t_no_trim.wav	no	1217.38000000000011	6	t	27	6530	\N	1213.58999999999992
+../output/tests/test_16_t/6_t_no_trim.wav	no	1220.83999999999992	7	t	27	6531	\N	1218.91000000000008
+../output/tests/test_16_t/7_t_yes_trim.wav	yes	1224.56999999999994	8	t	27	6532	\N	1222.65000000000009
+../output/tests/test_16_t/8_t_no_trim.wav	no	1229.75999999999999	9	t	27	6533	\N	1226.92000000000007
+../output/tests/test_16_t/9_t_no_trim.wav	no	1251.95000000000005	10	t	27	6534	\N	1248.92000000000007
+../output/tests/test_17_f/0_f_yes_trim.wav	yes	1293.72000000000003	1	f	18	6535	\N	1290.77999999999997
+../output/tests/test_17_f/1_f_yes_trim.wav	yes	1297.1400000000001	2	f	18	6536	\N	1295.53999999999996
+../output/tests/test_17_f/2_f_yes_trim.wav	yes	1301.27999999999997	3	f	18	6537	\N	1298.78999999999996
+../output/tests/test_17_f/3_f_no_trim.wav	no	1305.91000000000008	4	f	18	6538	\N	1302.8599999999999
+../output/tests/test_17_f/4_f_yes_trim.wav	yes	1309.08999999999992	5	f	18	6539	\N	1307.41000000000008
+../output/tests/test_17_f/5_f_no_trim.wav	no	1313.75999999999999	6	f	18	6540	\N	1310.76999999999998
+../output/tests/test_17_f/6_f_no_trim.wav	no	1316.59999999999991	7	f	18	6541	\N	1315.32999999999993
+../output/tests/test_17_f/7_f_no_trim.wav	no	1320.8900000000001	8	f	18	6542	\N	1318.19000000000005
+../output/tests/test_17_f/8_f_no_trim.wav	no	1328.91000000000008	9	f	18	6543	\N	1325.93000000000006
+../output/tests/test_17_f/9_f_no_trim.wav	no	1340.88000000000011	10	f	18	6544	\N	1337.92000000000007
+../output/tests/test_18_t/0_t_yes_trim.wav	yes	1378.3599999999999	1	t	14	6545	\N	1376.68000000000006
+../output/tests/test_18_t/1_t_no_trim.wav	no	1386.17000000000007	2	t	14	6546	\N	1382.26999999999998
+../output/tests/test_18_t/3_t_no_trim.wav	no	1394.73000000000002	4	t	14	6548	\N	1390.90000000000009
+../output/tests/test_18_t/4_t_yes_trim.wav	yes	1397.74000000000001	5	t	14	6549	\N	1395.83999999999992
+../output/tests/test_18_t/5_t_no_trim.wav	no	1402.48000000000002	6	t	14	6550	\N	1400.90000000000009
+../output/tests/test_18_t/6_t_yes_trim.wav	yes	1407.1099999999999	7	t	14	6551	\N	1404.26999999999998
+../output/tests/test_18_t/9_t_yes_trim.wav	yes	1422.1099999999999	10	t	14	6554	\N	1419.1400000000001
+../output/tests/test_19_f/1_f_yes_trim.wav	yes	26.9998000000000005	2	f	8	6556	\N	24.2863000000000007
+../output/tests/test_19_f/2_f_yes_trim.wav	yes	32.7719000000000023	3	f	8	6557	\N	28.9620999999999995
+../output/tests/test_19_f/3_f_yes_trim.wav	yes	36.0050000000000026	4	f	8	6558	\N	34.1171999999999969
+../output/tests/test_19_f/5_f_no_trim.wav	no	54.6961999999999975	6	f	8	6560	\N	51.7306000000000026
+../output/tests/test_19_f/6_f_no_trim.wav	no	62.0268999999999977	7	f	8	6561	\N	58.1409999999999982
+../output/tests/test_19_f/9_f_yes_trim.wav	yes	79.3729000000000013	10	f	8	6564	\N	78.1102000000000061
+../output/tests/test_20_f/0_f_yes_trim.wav	yes	127.156000000000006	1	f	20	6565	\N	125.569000000000003
+../output/tests/test_20_f/1_f_yes_trim.wav	yes	131.901999999999987	2	f	20	6566	\N	128.960000000000008
+../output/tests/test_20_f/2_f_no_trim.wav	no	135.710000000000008	3	f	20	6567	\N	133.324000000000012
+../output/tests/test_20_f/3_f_yes_trim.wav	yes	138.542000000000002	4	f	20	6568	\N	137.269000000000005
+../output/tests/test_20_f/5_f_yes_trim.wav	yes	146.068000000000012	6	f	20	6570	\N	144.119
+../output/tests/test_20_f/6_f_yes_trim.wav	yes	150.794999999999987	7	f	20	6571	\N	149.115000000000009
+../output/tests/test_20_f/7_f_yes_trim.wav	yes	155.790999999999997	8	f	20	6572	\N	153.128999999999991
+../output/tests/test_20_f/8_f_yes_trim.wav	yes	161.967999999999989	9	f	20	6573	\N	159.128999999999991
+../output/tests/test_20_f/9_f_no_trim.wav	no	166.592999999999989	10	f	20	6574	\N	163.59899999999999
+../output/tests/test_21_f/0_f_yes_trim.wav	yes	213.447000000000003	1	f	41	6575	\N	211.846000000000004
+../output/tests/test_21_f/3_f_yes_trim.wav	yes	228.562000000000012	4	f	41	6578	\N	224.657999999999987
+../output/tests/test_21_f/4_f_yes_trim.wav	yes	231.694999999999993	5	f	41	6579	\N	230.007000000000005
+../output/tests/test_21_f/5_f_yes_trim.wav	yes	235.527999999999992	6	f	41	6580	\N	233.067000000000007
+../output/tests/test_21_f/7_f_yes_trim.wav	yes	245.955000000000013	8	f	41	6582	\N	242.140999999999991
+../output/tests/test_21_f/8_f_no_trim.wav	no	251.484000000000009	9	f	41	6583	\N	248.519000000000005
+../output/tests/test_22_t/0_t_yes_trim.wav	yes	24.3673000000000002	1	t	21	6585	\N	20.5606000000000009
+../output/tests/test_23_f/0_f_no_trim.wav	no	109.347999999999999	1	f	16	6595	\N	106.381
+../output/tests/test_23_f/1_f_yes_trim.wav	yes	113.299999999999997	2	f	16	6596	\N	111.433999999999997
+../output/tests/test_23_f/3_f_yes_trim.wav	yes	122.031000000000006	4	f	16	6598	\N	119.066000000000003
+../output/tests/test_23_f/4_f_yes_trim.wav	yes	127.364999999999995	5	f	16	6599	\N	123.543999999999997
+../output/tests/test_23_f/5_f_no_trim.wav	no	133.016999999999996	6	f	16	6600	\N	130.355999999999995
+../output/tests/test_23_f/6_f_yes_trim.wav	yes	137.037000000000006	7	f	16	6601	\N	135.343999999999994
+../output/tests/test_23_f/9_f_no_trim.wav	no	166.403999999999996	10	f	16	6604	\N	163.36099999999999
+../output/tests/test_25_t/3_t_yes_trim.wav	yes	49.0557000000000016	4	t	45	6608	\N	47.7965000000000018
+../output/tests/test_25_t/4_t_yes_trim.wav	yes	53.8915000000000006	5	t	45	6609	\N	50.8629000000000033
+../output/tests/test_25_t/5_t_yes_trim.wav	yes	57.5157000000000025	6	t	45	6610	\N	55.0200999999999993
+../output/tests/test_25_t/8_t_no_trim.wav	no	89.8542000000000058	9	t	45	6613	\N	86.8923000000000059
+../output/tests/test_26_t/0_t_no_trim.wav	no	148.052999999999997	1	t	19	6615	\N	145.206999999999994
+../output/tests/test_26_t/1_t_no_trim.wav	no	153.962999999999994	2	t	19	6616	\N	150.088999999999999
+../output/tests/test_26_t/3_t_yes_trim.wav	yes	168.570999999999998	4	t	19	6618	\N	165.600999999999999
+../output/tests/test_26_t/8_t_no_trim.wav	no	205.747000000000014	9	t	19	6623	\N	201.955000000000013
+../output/tests/test_27_t/0_t_yes_trim.wav	yes	243.97399999999999	1	t	2	6625	\N	241.119
+../output/tests/test_27_t/2_t_no_trim.wav	no	255.439999999999998	3	t	2	6627	\N	252.748999999999995
+../output/tests/test_27_t/6_t_no_trim.wav	no	284.954999999999984	7	t	2	6631	\N	283.267999999999972
+../output/tests/test_27_t/7_t_no_trim.wav	no	291.01400000000001	8	t	2	6632	\N	287.949999999999989
+../output/tests/test_27_t/8_t_no_trim.wav	no	296.767999999999972	9	t	2	6633	\N	292.959000000000003
+../output/tests/test_27_t/9_t_no_trim.wav	no	303.857000000000028	10	t	2	6634	\N	299.959000000000003
+../output/tests/test_28_f/0_f_yes_trim.wav	yes	345.163000000000011	1	f	15	6635	\N	341.281999999999982
+../output/tests/test_28_f/3_f_yes_trim.wav	yes	364.855000000000018	4	f	15	6638	\N	363.173999999999978
+../output/tests/test_28_f/4_f_yes_trim.wav	yes	368.317999999999984	5	f	15	6639	\N	366.418000000000006
+../output/tests/test_28_f/6_f_no_trim.wav	no	380.877999999999986	7	f	15	6641	\N	378.500999999999976
+../output/tests/test_28_f/9_f_yes_trim.wav	yes	409.759000000000015	10	f	15	6644	\N	405.958000000000027
+../output/tests/test_29_t/0_t_no_trim.wav	no	493.213000000000022	1	t	7	6645	\N	490.201999999999998
+../output/tests/test_29_t/1_t_no_trim.wav	no	498.833000000000027	2	t	7	6646	\N	495.77800000000002
+../output/tests/test_29_t/3_t_no_trim.wav	no	512.875999999999976	4	t	7	6648	\N	510.937000000000012
+../output/tests/test_29_t/4_t_yes_trim.wav	yes	517.268000000000029	5	t	7	6649	\N	514.941000000000031
+../output/tests/test_29_t/5_t_yes_trim.wav	yes	520.505999999999972	6	t	7	6650	\N	518.592999999999961
+../output/tests/test_29_t/6_t_yes_trim.wav	yes	525.466000000000008	7	t	7	6651	\N	521.669999999999959
+../output/tests/test_29_t/8_t_no_trim.wav	no	541.027000000000044	9	t	7	6653	\N	539.450000000000045
+../output/tests/test_29_t/9_t_yes_trim.wav	yes	545.192000000000007	10	t	7	6654	\N	542.265999999999963
+../output/tests/test_30_f/0_f_yes_trim.wav	yes	578.131999999999948	1	f	23	6655	\N	576.43100000000004
+../output/tests/test_30_f/1_f_yes_trim.wav	yes	582.274999999999977	2	f	23	6656	\N	579.294999999999959
+../output/tests/test_30_f/2_f_yes_trim.wav	yes	586.354000000000042	3	f	23	6657	\N	583.658000000000015
+../output/tests/test_30_f/3_f_yes_trim.wav	yes	589.30499999999995	4	f	23	6658	\N	587.702999999999975
+../output/tests/test_30_f/4_f_yes_trim.wav	yes	594.191000000000031	5	f	23	6659	\N	590.369000000000028
+../output/tests/test_30_f/5_f_yes_trim.wav	yes	597.988000000000056	6	f	23	6660	\N	595.033000000000015
+../output/tests/test_30_f/6_f_yes_trim.wav	yes	604.003000000000043	7	f	23	6661	\N	600.950000000000045
+../output/tests/test_30_f/7_f_yes_trim.wav	yes	607.672000000000025	8	f	23	6662	\N	605.014999999999986
+../output/tests/test_30_f/9_f_yes_trim.wav	yes	641.826000000000022	10	f	23	6664	\N	639.936000000000035
+../output/tests/test_31_f/0_f_yes_trim.wav	yes	752.273000000000025	1	f	40	6665	\N	749.903999999999996
+../output/tests/test_31_f/1_f_yes_trim.wav	yes	757.442000000000007	2	f	40	6666	\N	754.982999999999947
+../output/tests/test_31_f/2_f_no_trim.wav	no	762.083999999999946	3	f	40	6667	\N	759.150999999999954
+../output/tests/test_31_f/3_f_yes_trim.wav	yes	766.869000000000028	4	f	40	6668	\N	763.918999999999983
+../output/tests/test_31_f/4_f_no_trim.wav	no	771.350999999999999	5	f	40	6669	\N	768.282000000000039
+../output/tests/test_31_f/5_f_yes_trim.wav	yes	777.394000000000005	6	f	40	6670	\N	774.451000000000022
+../output/tests/test_31_f/6_f_no_trim.wav	no	782.302000000000021	7	f	40	6671	\N	779.317999999999984
+../output/tests/test_31_f/7_f_yes_trim.wav	yes	786.19500000000005	8	f	40	6672	\N	784.926000000000045
+../output/tests/test_31_f/8_f_no_trim.wav	no	790.812999999999988	9	f	40	6673	\N	788.932000000000016
+../output/tests/test_31_f/9_f_yes_trim.wav	yes	795.875	10	f	40	6674	\N	793.932999999999993
+../output/tests/test_32_f/0_f_no_trim.wav	no	809.793000000000006	1	f	42	6675	\N	806.741999999999962
+../output/tests/test_32_f/1_f_no_trim.wav	no	813.379000000000019	2	f	42	6676	\N	811.697999999999979
+../output/tests/test_32_f/2_f_yes_trim.wav	yes	817.506999999999948	3	f	42	6677	\N	815.55499999999995
+../output/tests/test_32_f/3_f_no_trim.wav	no	821.602999999999952	4	f	42	6678	\N	818.941000000000031
+../output/tests/test_32_f/4_f_yes_trim.wav	yes	826.672000000000025	5	f	42	6679	\N	823.706999999999994
+../output/tests/test_32_f/5_f_yes_trim.wav	yes	832.168000000000006	6	f	42	6680	\N	828.384000000000015
+../output/tests/test_32_f/6_f_yes_trim.wav	yes	836.83299999999997	7	f	42	6681	\N	834.932000000000016
+../output/tests/test_32_f/7_f_no_trim.wav	no	840.216000000000008	8	f	42	6682	\N	838.928999999999974
+../output/tests/test_32_f/8_f_no_trim.wav	no	844.052000000000021	9	f	42	6683	\N	841.682999999999993
+../output/tests/test_32_f/9_f_yes_trim.wav	yes	849.087999999999965	10	f	42	6684	\N	846.25
+../output/tests/test_37_t/0_t_no_trim.wav	no	18.4636999999999993	1	t	37	6695	\N	14.6714000000000002
+../output/tests/test_37_t/1_t_yes_trim.wav	yes	24.6397000000000013	2	t	37	6696	\N	21.6490000000000009
+../output/tests/test_37_t/3_t_no_trim.wav	no	34.927500000000002	4	t	37	6698	\N	31.9800000000000004
+../output/tests/test_37_t/4_t_no_trim.wav	no	38.6204999999999998	5	t	37	6699	\N	36.9354000000000013
+../output/tests/test_37_t/5_t_no_trim.wav	no	44.8671999999999969	6	t	37	6700	\N	43.2777000000000029
+../output/tests/test_37_t/6_t_no_trim.wav	no	49.7423000000000002	7	t	37	6701	\N	46.7449000000000012
+../output/tests/test_37_t/8_t_no_trim.wav	no	68.6417000000000002	9	t	37	6703	\N	66.2866000000000071
+../output/tests/test_37_t/9_t_no_trim.wav	no	90.0290999999999997	10	t	37	6704	\N	86.1373999999999995
+../output/tests/test_38_t/0_t_no_trim.wav	no	143.967000000000013	1	t	28	6705	\N	142.370000000000005
+../output/tests/test_38_t/1_t_yes_trim.wav	yes	150.37700000000001	2	t	28	6706	\N	146.551999999999992
+../output/tests/test_38_t/2_t_no_trim.wav	no	155.969999999999999	3	t	28	6707	\N	154.278999999999996
+../output/tests/test_38_t/4_t_no_trim.wav	no	170.207999999999998	5	t	28	6709	\N	166.311000000000007
+../output/tests/test_38_t/5_t_no_trim.wav	no	176.195999999999998	6	t	28	6710	\N	172.39500000000001
+../output/tests/test_38_t/7_t_no_trim.wav	no	191.336000000000013	8	t	28	6712	\N	188.294999999999987
+../output/tests/test_39_f/0_f_yes_trim.wav	yes	231.110000000000014	1	f	4	6715	\N	228.26400000000001
+../output/tests/test_39_f/1_f_yes_trim.wav	yes	236.199000000000012	2	f	4	6716	\N	233.230999999999995
+../output/tests/test_39_f/2_f_no_trim.wav	no	242.742999999999995	3	f	4	6717	\N	239.805000000000007
+../output/tests/test_39_f/4_f_yes_trim.wav	yes	251.98599999999999	5	f	4	6719	\N	250.711999999999989
+../output/tests/test_39_f/6_f_yes_trim.wav	yes	263.874000000000024	7	f	4	6721	\N	262.27800000000002
+../output/tests/test_39_f/8_f_no_trim.wav	no	273.951000000000022	9	f	4	6723	\N	271.29000000000002
+../output/tests/test_40_f/1_f_yes_trim.wav	yes	348.649999999999977	2	f	30	6726	\N	344.824000000000012
+../output/tests/test_40_f/3_f_yes_trim.wav	yes	357.288999999999987	4	f	30	6728	\N	354.33499999999998
+../output/tests/test_40_f/4_f_yes_trim.wav	yes	367.970000000000027	5	f	30	6729	\N	366.278999999999996
+../output/tests/test_40_f/8_f_yes_trim.wav	yes	391.095000000000027	9	f	30	6733	\N	388.158000000000015
+../output/tests/test_40_f/9_f_yes_trim.wav	yes	396.297000000000025	10	f	30	6734	\N	394.283000000000015
+../output/tests/test_41_t/0_t_yes_trim.wav	yes	560.908000000000015	1	t	36	6735	\N	558.200000000000045
+../output/tests/test_41_t/1_t_no_trim.wav	no	568.173000000000002	2	t	36	6736	\N	565.517000000000053
+../output/tests/test_41_t/2_t_yes_trim.wav	yes	572.136999999999944	3	t	36	6737	\N	570.864000000000033
+../output/tests/test_41_t/3_t_no_trim.wav	no	578.615000000000009	4	t	36	6738	\N	575.634000000000015
+../output/tests/test_41_t/4_t_yes_trim.wav	yes	584.368000000000052	5	t	36	6739	\N	581.30499999999995
+../output/tests/test_41_t/5_t_yes_trim.wav	yes	588.232999999999947	6	t	36	6740	\N	586.552000000000021
+../output/tests/test_41_t/6_t_no_trim.wav	no	595.414999999999964	7	t	36	6741	\N	593.817999999999984
+../output/tests/test_41_t/7_t_yes_trim.wav	yes	601.888000000000034	8	t	36	6742	\N	598.88900000000001
+../output/tests/test_41_t/8_t_no_trim.wav	no	611.245999999999981	9	t	36	6743	\N	608.865000000000009
+../output/tests/test_41_t/9_t_no_trim.wav	no	615.636999999999944	10	t	36	6744	\N	613.287000000000035
+../output/tests/test_42_t/0_t_no_trim.wav	no	670.989000000000033	1	t	13	6745	\N	669.316000000000031
+../output/tests/test_42_t/3_t_yes_trim.wav	yes	718.115999999999985	4	t	13	6748	\N	715.620000000000005
+../output/tests/test_42_t/5_t_no_trim.wav	no	736.238000000000056	6	t	13	6750	\N	732.458999999999946
+../output/tests/test_42_t/6_t_yes_trim.wav	yes	740.972999999999956	7	t	13	6751	\N	738.291000000000054
+../output/tests/test_42_t/7_t_no_trim.wav	no	746.865999999999985	8	t	13	6752	\N	745.27800000000002
+../output/tests/test_42_t/8_t_no_trim.wav	no	754	9	t	13	6753	\N	751.291000000000054
+../output/tests/test_42_t/9_t_yes_trim.wav	yes	757.836000000000013	10	t	13	6754	\N	755.947000000000003
+../output/tests/test_43_t/1_t_no_trim.wav	no	800.142000000000053	2	t	6	6756	\N	797.219000000000051
+../output/tests/test_43_t/2_t_no_trim.wav	no	804.625	3	t	6	6757	\N	801.682999999999993
+../output/tests/test_43_t/4_t_no_trim.wav	no	814.86099999999999	5	t	6	6759	\N	813.27800000000002
+../output/tests/test_43_t/5_t_no_trim.wav	no	820.970000000000027	6	t	6	6760	\N	819.278999999999996
+../output/tests/test_43_t/6_t_yes_trim.wav	yes	827.539999999999964	7	t	6	6761	\N	826.274000000000001
+../output/tests/test_43_t/7_t_yes_trim.wav	yes	832.559999999999945	8	t	6	6762	\N	829.533999999999992
+../output/tests/test_43_t/8_t_no_trim.wav	no	837.155999999999949	9	t	6	6763	\N	834.796000000000049
+../output/tests/test_43_t/9_t_no_trim.wav	no	840.68100000000004	10	t	6	6764	\N	838.744000000000028
+../output/tests/test_44_t/1_t_yes_trim.wav	yes	875.563999999999965	2	t	33	6766	\N	873.095000000000027
+../output/tests/test_44_t/2_t_yes_trim.wav	yes	880.331000000000017	3	t	33	6767	\N	877.655999999999949
+../output/tests/test_44_t/3_t_no_trim.wav	no	884.677999999999997	4	t	33	6768	\N	881.722999999999956
+../output/tests/test_44_t/4_t_yes_trim.wav	yes	889.270999999999958	5	t	33	6769	\N	886.293999999999983
+../output/tests/test_44_t/5_t_yes_trim.wav	yes	891.688999999999965	6	t	33	6770	\N	890.437000000000012
+../output/tests/test_44_t/6_t_no_trim.wav	no	895.942000000000007	7	t	33	6771	\N	894.278999999999996
+../output/tests/test_44_t/7_t_yes_trim.wav	yes	899.222999999999956	8	t	33	6772	\N	897.323999999999955
+../output/tests/test_44_t/8_t_no_trim.wav	no	905.859000000000037	9	t	33	6773	\N	904.27800000000002
+../output/tests/test_44_t/9_t_no_trim.wav	no	913.245000000000005	10	t	33	6774	\N	910.293999999999983
+../output/tests/test_45_t/0_t_no_trim.wav	no	939.219000000000051	1	t	10	6775	\N	936.246999999999957
+../output/tests/test_45_t/1_t_no_trim.wav	no	944.927000000000021	2	t	10	6776	\N	942.912000000000035
+../output/tests/test_45_t/3_t_yes_trim.wav	yes	954.080000000000041	4	t	10	6778	\N	951.038000000000011
+../output/tests/test_45_t/4_t_no_trim.wav	no	958.366999999999962	5	t	10	6779	\N	955.994000000000028
+../output/tests/test_45_t/5_t_no_trim.wav	no	962.169999999999959	6	t	10	6780	\N	960.245000000000005
+../output/tests/test_45_t/6_t_yes_trim.wav	yes	967.543000000000006	7	t	10	6781	\N	966.274000000000001
+../output/tests/test_45_t/7_t_yes_trim.wav	yes	972.18100000000004	8	t	10	6782	\N	970.280999999999949
+../output/tests/test_45_t/8_t_no_trim.wav	no	975.400999999999954	9	t	10	6783	\N	973.734000000000037
+../output/tests/test_45_t/9_t_no_trim.wav	no	979.168000000000006	10	t	10	6784	\N	977.58299999999997
+../output/tests/test_46_f/0_f_yes_trim.wav	yes	1043.16000000000008	1	f	32	6785	\N	1041.47000000000003
+../output/tests/test_46_f/1_f_yes_trim.wav	yes	1049.84999999999991	2	f	32	6786	\N	1048.27999999999997
+../output/tests/test_46_f/2_f_yes_trim.wav	yes	1054.93000000000006	3	f	32	6787	\N	1052.44000000000005
+../output/tests/test_46_f/4_f_no_trim.wav	no	1071.05999999999995	5	f	32	6789	\N	1067.25999999999999
+../output/tests/test_46_f/5_f_yes_trim.wav	yes	1075.67000000000007	6	f	32	6790	\N	1073.02999999999997
+../output/tests/test_46_f/6_f_no_trim.wav	no	1080.74000000000001	7	f	32	6791	\N	1078.77999999999997
+../output/tests/test_46_f/7_f_yes_trim.wav	yes	1085.27999999999997	8	f	32	6792	\N	1082.28999999999996
+../output/tests/test_46_f/8_f_yes_trim.wav	yes	1089.29999999999995	9	f	32	6793	\N	1087.27999999999997
+../output/tests/test_46_f/9_f_yes_trim.wav	yes	1098.66000000000008	10	f	32	6794	\N	1096.28999999999996
+../output/tests/test_47_f/0_f_yes_trim.wav	yes	1415.96000000000004	1	f	34	6795	\N	1413.29999999999995
+../output/tests/test_47_f/1_f_yes_trim.wav	yes	1420.38000000000011	2	f	34	6796	\N	1418.70000000000005
+../output/tests/test_47_f/3_f_no_trim.wav	no	1428.93000000000006	4	f	34	6798	\N	1425.00999999999999
+../output/tests/test_47_f/4_f_yes_trim.wav	yes	1435.1099999999999	5	f	34	6799	\N	1431.29999999999995
+../output/tests/test_47_f/5_f_yes_trim.wav	yes	1440.6400000000001	6	f	34	6800	\N	1438.28999999999996
+../output/tests/test_47_f/7_f_yes_trim.wav	yes	1447.67000000000007	8	f	34	6802	\N	1445.77999999999997
+../output/tests/test_47_f/8_f_no_trim.wav	no	1452.71000000000004	9	f	34	6803	\N	1450.34999999999991
+../output/tests/test_47_f/9_f_no_trim.wav	no	1461.08999999999992	10	f	34	6804	\N	1457.29999999999995
+../output/tests/test_48_f/0_f_no_trim.wav	no	1518.59999999999991	1	f	31	6805	\N	1515.95000000000005
+../output/tests/test_48_f/1_f_no_trim.wav	no	1522.6099999999999	2	f	31	6806	\N	1520.6099999999999
+../output/tests/test_48_f/2_f_yes_trim.wav	yes	1526.61999999999989	3	f	31	6807	\N	1523.56999999999994
+../output/tests/test_48_f/3_f_yes_trim.wav	yes	1529.28999999999996	4	f	31	6808	\N	1527.71000000000004
+../output/tests/test_48_f/6_f_yes_trim.wav	yes	1540.80999999999995	7	f	31	6811	\N	1538.48000000000002
+../output/tests/test_48_f/7_f_no_trim.wav	no	1545.00999999999999	8	f	31	6812	\N	1542.6400000000001
+../output/tests/test_49_t/0_t_no_trim.wav	no	1579.8900000000001	1	t	35	6815	\N	1576.92000000000007
+../output/tests/test_49_t/3_t_no_trim.wav	no	1595.09999999999991	4	t	35	6818	\N	1592.25999999999999
+../output/tests/test_49_t/5_t_yes_trim.wav	yes	1604.66000000000008	6	t	35	6820	\N	1601.70000000000005
+../output/tests/test_49_t/6_t_no_trim.wav	no	1608.15000000000009	7	t	35	6821	\N	1606.45000000000005
+../output/tests/test_49_t/7_t_no_trim.wav	no	1613.19000000000005	8	t	35	6822	\N	1611.59999999999991
+../output/tests/test_49_t/9_t_yes_trim.wav	yes	1633.19000000000005	10	t	35	6824	\N	1631.27999999999997
+../output/tests/test_50_t/2_t_yes_trim.wav	yes	1665.50999999999999	3	t	24	6827	\N	1663.63000000000011
+../output/tests/test_50_t/4_t_yes_trim.wav	yes	1677.99000000000001	5	t	24	6829	\N	1674.17000000000007
+../output/tests/test_50_t/5_t_yes_trim.wav	yes	1682.55999999999995	6	t	24	6830	\N	1681.26999999999998
+../output/tests/test_50_t/6_t_no_trim.wav	no	1685.80999999999995	7	t	24	6831	\N	1684.22000000000003
+../output/tests/test_50_t/7_t_no_trim.wav	no	1690.25	8	t	24	6832	\N	1688.56999999999994
+../output/tests/test_51_t/0_t_no_trim.wav	no	1860.71000000000004	1	t	12	6835	\N	1859.05999999999995
+../output/tests/test_51_t/2_t_yes_trim.wav	yes	1894.32999999999993	3	t	12	6837	\N	1892.74000000000001
+../output/tests/test_51_t/3_t_no_trim.wav	no	1901.70000000000005	4	t	12	6838	\N	1897.92000000000007
+../output/tests/test_51_t/4_t_no_trim.wav	no	1906.30999999999995	5	t	12	6839	\N	1904.27999999999997
+../output/tests/test_51_t/5_t_yes_trim.wav	yes	1911.32999999999993	6	t	12	6840	\N	1908.29999999999995
+../output/tests/test_51_t/6_t_yes_trim.wav	yes	1916.84999999999991	7	t	12	6841	\N	1914.95000000000005
+../output/tests/test_51_t/7_t_no_trim.wav	no	1922.67000000000007	8	t	12	6842	\N	1920.28999999999996
+../output/tests/test_51_t/8_t_no_trim.wav	no	1940.28999999999996	9	t	12	6843	\N	1937.28999999999996
+../output/tests/test_51_t/9_t_no_trim.wav	no	1967.25	10	t	12	6844	\N	1964.28999999999996
+../output/tests/test_52_f/0_f_no_trim.wav	no	2009.93000000000006	1	f	26	6845	\N	2006.03999999999996
+../output/tests/test_52_f/1_f_no_trim.wav	no	2015.58999999999992	2	f	26	6846	\N	2012.61999999999989
+../output/tests/test_52_f/2_f_no_trim.wav	no	2022.08999999999992	3	f	26	6847	\N	2018.29999999999995
+../output/tests/test_52_f/3_f_no_trim.wav	no	2025.75	4	f	26	6848	\N	2024.15000000000009
+../output/tests/test_52_f/4_f_no_trim.wav	no	2031.26999999999998	5	f	26	6849	\N	2028.22000000000003
+../output/tests/test_52_f/5_f_no_trim.wav	no	2036.46000000000004	6	f	26	6850	\N	2033.48000000000002
+../output/tests/test_52_f/6_f_no_trim.wav	no	2039.97000000000003	7	f	26	6851	\N	2038.27999999999997
+../output/tests/test_52_f/7_f_no_trim.wav	no	2046.1400000000001	8	f	26	6852	\N	2043.28999999999996
+../output/tests/test_52_f/8_f_no_trim.wav	no	2050.82000000000016	9	f	26	6853	\N	2047.8599999999999
+../output/tests/test_52_f/9_f_yes_trim.wav	yes	2066.51000000000022	10	f	26	6854	\N	2065.26999999999998
+../output/tests/test_53_t/1_t_yes_trim.wav	yes	2098.65000000000009	2	t	29	6856	\N	2095.98000000000002
+../output/tests/test_53_t/2_t_yes_trim.wav	yes	2104.44000000000005	3	t	29	6857	\N	2101.94000000000005
+../output/tests/test_53_t/3_t_no_trim.wav	no	2108.55000000000018	4	t	29	6858	\N	2106.19999999999982
+../output/tests/test_53_t/4_t_no_trim.wav	no	2111.92999999999984	5	t	29	6859	\N	2110.2800000000002
+../output/tests/test_53_t/5_t_yes_trim.wav	yes	2117.55000000000018	6	t	29	6860	\N	2116.26999999999998
+../output/tests/test_53_t/6_t_yes_trim.wav	yes	2120.80000000000018	7	t	29	6861	\N	2118.92000000000007
+../output/tests/test_53_t/7_t_no_trim.wav	no	2125.26999999999998	8	t	29	6862	\N	2122.28999999999996
+../output/tests/test_53_t/8_t_no_trim.wav	no	2129.23000000000002	9	t	29	6863	\N	2127.2800000000002
+../output/tests/test_53_t/9_t_no_trim.wav	no	2134.98999999999978	10	t	29	6864	\N	2132.28999999999996
+../output/tests/test_54_t/0_t_no_trim.wav	no	2154.88999999999987	1	t	39	6865	\N	2151.92999999999984
+../output/tests/test_54_t/1_t_no_trim.wav	no	2160.03999999999996	2	t	39	6866	\N	2157.09999999999991
+../output/tests/test_54_t/2_t_no_trim.wav	no	2163.23999999999978	3	t	39	6867	\N	2161.65000000000009
+../output/tests/test_54_t/3_t_yes_trim.wav	yes	2166.4699999999998	4	t	39	6868	\N	2164.59999999999991
+../output/tests/test_54_t/4_t_no_trim.wav	no	2169.63000000000011	5	t	39	6869	\N	2167.94000000000005
+../output/tests/test_54_t/5_t_no_trim.wav	no	2173.30999999999995	6	t	39	6870	\N	2171.30000000000018
+../output/tests/test_54_t/6_t_no_trim.wav	no	2177.55000000000018	7	t	39	6871	\N	2174.55999999999995
+../output/tests/test_54_t/7_t_yes_trim.wav	yes	2181.96000000000004	8	t	39	6872	\N	2179.28999999999996
+../output/tests/test_54_t/8_t_no_trim.wav	no	2187.25	9	t	39	6873	\N	2183.4699999999998
+../output/tests/test_54_t/9_t_yes_trim.wav	yes	2206.34000000000015	10	t	39	6874	\N	2203.28999999999996
+../output/tests/test_55_f/1_f_no_trim.wav	no	2235.78999999999996	2	f	3	6876	\N	2232.73999999999978
+../output/tests/test_55_f/2_f_yes_trim.wav	yes	2240.65000000000009	3	f	3	6877	\N	2237.80000000000018
+../output/tests/test_55_f/3_f_no_trim.wav	no	2243.63999999999987	4	f	3	6878	\N	2242.05000000000018
+../output/tests/test_55_f/4_f_no_trim.wav	no	2246.9699999999998	5	f	3	6879	\N	2245.28999999999996
+../output/tests/test_55_f/5_f_no_trim.wav	no	2252.19999999999982	6	f	3	6880	\N	2248.36999999999989
+../output/tests/test_55_f/6_f_no_trim.wav	no	2254.88000000000011	7	f	3	6881	\N	2252.92000000000007
+../output/tests/test_55_f/7_f_no_trim.wav	no	2259.36000000000013	8	f	3	6882	\N	2256.38000000000011
+../output/tests/test_55_f/8_f_no_trim.wav	no	2273.98000000000002	9	f	3	6883	\N	2271.28999999999996
+../output/tests/test_55_f/9_f_no_trim.wav	no	2277.40999999999985	10	f	3	6884	\N	2275.05000000000018
+../output/tests/test_56_f/0_yes_f_trim.wav	yes	24.6149999999999984	1	f	307	6885	\N	22.9451000000000001
+../output/tests/test_56_f/1_no_f_trim.wav	no	29.0984000000000016	2	f	307	6886	\N	27.0993999999999993
+../output/tests/test_56_f/2_no_f_trim.wav	no	34.789200000000001	3	f	307	6887	\N	31.7645000000000017
+../output/tests/test_56_f/3_no_f_trim.wav	no	39.7109000000000023	4	f	307	6888	\N	37.8245000000000005
+../output/tests/test_56_f/5_yes_f_trim.wav	yes	49.1159000000000034	6	f	307	6890	\N	46.0512999999999977
+../output/tests/test_56_f/6_no_f_trim.wav	no	52.8978999999999999	7	f	307	6891	\N	51.3038000000000025
+../output/tests/test_56_f/8_no_f_trim.wav	no	66.0660000000000025	9	f	307	6893	\N	63.0863999999999976
+../output/tests/test_56_f/9_yes_f_trim.wav	yes	75.3067000000000064	10	f	307	6894	\N	71.5093999999999994
+../output/tests/test_57_t/1_no_t_trim.wav	no	91.196700000000007	2	t	306	6896	\N	89.6003999999999934
+../output/tests/test_57_t/2_no_t_trim.wav	no	97.5622999999999934	3	t	306	6897	\N	95.8849000000000018
+../output/tests/test_57_t/3_no_t_trim.wav	no	103.390000000000001	4	t	306	6898	\N	100.453999999999994
+../output/tests/test_57_t/4_no_t_trim.wav	no	109.099999999999994	5	t	306	6899	\N	106.128
+../output/tests/test_57_t/6_yes_t_trim.wav	yes	120.156999999999996	7	t	306	6901	\N	118.879999999999995
+../output/tests/test_57_t/7_yes_t_trim.wav	yes	126.236999999999995	8	t	306	6902	\N	123.248000000000005
+../output/tests/test_57_t/8_no_t_trim.wav	no	130.977000000000004	9	t	306	6903	\N	128.312000000000012
+../output/tests/test_57_t/9_no_t_trim.wav	no	139.751000000000005	10	t	306	6904	\N	136.899000000000001
+../output/tests/test_58_f/0_yes_f_trim.wav	yes	97.7845999999999975	1	f	293	6905	\N	94.7566000000000059
+../output/tests/test_58_f/1_no_f_trim.wav	no	106.378	2	f	293	6906	\N	102.549999999999997
+../output/tests/test_58_f/2_yes_f_trim.wav	yes	112.206000000000003	3	f	293	6907	\N	109.721000000000004
+../output/tests/test_58_f/3_yes_f_trim.wav	yes	116.359999999999999	4	f	293	6908	\N	114.474000000000004
+../output/tests/test_58_f/4_no_f_trim.wav	no	121.769999999999996	5	f	293	6909	\N	119.834000000000003
+../output/tests/test_58_f/5_yes_f_trim.wav	yes	127.484999999999999	6	f	293	6910	\N	124.498999999999995
+../output/tests/test_58_f/6_yes_f_trim.wav	yes	132.756	7	f	293	6911	\N	131.478000000000009
+../output/tests/test_58_f/7_no_f_trim.wav	no	139.461999999999989	8	f	293	6912	\N	136.498999999999995
+../output/tests/test_58_f/8_no_f_trim.wav	no	143.433999999999997	9	f	293	6913	\N	141.751000000000005
+../output/tests/test_58_f/9_yes_f_trim.wav	yes	148.889999999999986	10	f	293	6914	\N	145.925000000000011
+../output/tests/test_59_f/4_no_f_trim.wav	no	180.306000000000012	5	f	291	6919	\N	176.509999999999991
+../output/tests/test_59_f/5_yes_f_trim.wav	yes	185.510999999999996	6	f	291	6920	\N	183.491000000000014
+../output/tests/test_59_f/6_no_f_trim.wav	no	189.11099999999999	7	f	291	6921	\N	187.437000000000012
+../output/tests/test_59_f/7_yes_f_trim.wav	yes	193.036000000000001	8	f	291	6922	\N	190
+../output/tests/test_59_f/8_yes_f_trim.wav	yes	198.211999999999989	9	f	291	6923	\N	195.170999999999992
+../output/tests/test_60_t/4_yes_t_trim.wav	yes	370.228999999999985	5	t	289	6929	\N	368.262999999999977
+../output/tests/test_60_t/5_yes_t_trim.wav	yes	376.733000000000004	6	t	289	6930	\N	372.942000000000007
+../output/tests/test_60_t/8_yes_t_trim.wav	yes	394.865000000000009	9	t	289	6933	\N	392.495999999999981
+../output/tests/test_61_t/2_yes_t_trim.wav	yes	436.266999999999996	3	t	308	6937	\N	432.47199999999998
+../output/tests/test_61_t/3_no_t_trim.wav	no	444.769000000000005	4	t	308	6938	\N	440.867000000000019
+../output/tests/test_61_t/4_yes_t_trim.wav	yes	449.454999999999984	5	t	308	6939	\N	446.502999999999986
+../output/tests/test_62_t/0_yes_t_trim.wav	yes	520.063999999999965	1	t	294	6945	\N	517.100999999999999
+../output/tests/test_62_t/1_yes_t_trim.wav	yes	524.442999999999984	2	t	294	6946	\N	522.059999999999945
+../output/tests/test_62_t/2_yes_t_trim.wav	yes	529.498000000000047	3	t	294	6947	\N	527.816000000000031
+../output/tests/test_62_t/3_yes_t_trim.wav	yes	536.321000000000026	4	t	294	6948	\N	532.496999999999957
+../output/tests/test_62_t/5_yes_t_trim.wav	yes	551.875	6	t	294	6950	\N	549.490999999999985
+../output/tests/test_62_t/6_no_t_trim.wav	no	560.522000000000048	7	t	294	6951	\N	557.499000000000024
+../output/tests/test_62_t/9_yes_t_trim.wav	yes	591.748000000000047	10	t	294	6954	\N	590.482999999999947
+../output/tests/test_63_f/0_yes_f_trim.wav	yes	619.75	1	f	296	6955	\N	617.355000000000018
+../output/tests/test_63_f/1_yes_f_trim.wav	yes	626.182999999999993	2	f	296	6956	\N	623.230999999999995
+../output/tests/test_63_f/3_no_f_trim.wav	no	637.825000000000045	4	f	296	6958	\N	634.871999999999957
+../output/tests/test_63_f/4_yes_f_trim.wav	yes	643.45799999999997	5	f	296	6959	\N	641.437000000000012
+../output/tests/test_63_f/5_yes_f_trim.wav	yes	650.16700000000003	6	f	296	6960	\N	647.80499999999995
+../output/tests/test_63_f/6_yes_f_trim.wav	yes	654.234000000000037	7	f	296	6961	\N	652.359000000000037
+../output/tests/test_63_f/8_yes_f_trim.wav	yes	665.067000000000007	9	f	296	6963	\N	663.48599999999999
+../output/tests/test_63_f/9_yes_f_trim.wav	yes	669.513000000000034	10	f	296	6964	\N	667.841000000000008
+../output/tests/test_64_f/0_yes_f_trim.wav	yes	725.225000000000023	1	f	295	6965	\N	721.307999999999993
+../output/tests/test_64_f/1_yes_f_trim.wav	yes	730.124000000000024	2	f	295	6966	\N	728.865999999999985
+../output/tests/test_64_f/3_yes_f_trim.wav	yes	738.077999999999975	4	f	295	6968	\N	736.166000000000054
+../output/tests/test_64_f/9_yes_f_trim.wav	yes	796.284999999999968	10	f	295	6974	\N	792.513000000000034
+../output/tests/test_65_f/0_yes_f_trim.wav	yes	1104.50999999999999	1	f	303	6975	\N	1101.81999999999994
+../output/tests/test_65_f/2_yes_f_trim.wav	yes	1117.45000000000005	3	f	303	6977	\N	1113.56999999999994
+../output/tests/test_65_f/3_yes_f_trim.wav	yes	1122.06999999999994	4	f	303	6978	\N	1120.49000000000001
+../output/tests/test_65_f/4_yes_f_trim.wav	yes	1132.20000000000005	5	f	303	6979	\N	1130.48000000000002
+../output/tests/test_65_f/6_yes_f_trim.wav	yes	1142.13000000000011	7	f	303	6981	\N	1139.75999999999999
+../output/tests/test_65_f/7_yes_f_trim.wav	yes	1146.67000000000007	8	f	303	6982	\N	1144.30999999999995
+../output/tests/test_65_f/8_yes_f_trim.wav	yes	1152.74000000000001	9	f	303	6983	\N	1151.48000000000002
+../output/tests/test_66_f/0_no_f_trim.wav	no	1173.1099999999999	1	f	298	6985	\N	1170.40000000000009
+../output/tests/test_66_f/1_no_f_trim.wav	no	1181.16000000000008	2	f	298	6986	\N	1178.18000000000006
+../output/tests/test_66_f/2_no_f_trim.wav	no	1184.93000000000006	3	f	298	6987	\N	1183.24000000000001
+../output/tests/test_66_f/4_yes_f_trim.wav	yes	1192.95000000000005	5	f	298	6989	\N	1191.03999999999996
+../output/tests/test_66_f/5_no_f_trim.wav	no	1199.88000000000011	6	f	298	6990	\N	1197.5
+../output/tests/test_66_f/6_no_f_trim.wav	no	1205.48000000000002	7	f	298	6991	\N	1202.46000000000004
+../output/tests/test_66_f/9_yes_f_trim.wav	yes	1232.55999999999995	10	f	298	6994	\N	1229.5
+../output/tests/test_67_t/0_yes_t_trim.wav	yes	1245.72000000000003	1	t	302	6995	\N	1244.13000000000011
+../output/tests/test_67_t/1_yes_t_trim.wav	yes	1251.52999999999997	2	t	302	6996	\N	1250.27999999999997
+../output/tests/test_67_t/2_yes_t_trim.wav	yes	1255.91000000000008	3	t	302	6997	\N	1253.03999999999996
+../output/tests/test_67_t/3_yes_t_trim.wav	yes	1260.25999999999999	4	t	302	6998	\N	1257.90000000000009
+../output/tests/test_67_t/4_yes_t_trim.wav	yes	1264.61999999999989	5	t	302	6999	\N	1262.25
+../output/tests/test_67_t/5_yes_t_trim.wav	yes	1268.77999999999997	6	t	302	7000	\N	1267.1099999999999
+../output/tests/test_67_t/6_no_t_trim.wav	no	1275.44000000000005	7	t	302	7001	\N	1273.49000000000001
+../output/tests/test_67_t/7_no_t_trim.wav	no	1284.53999999999996	8	t	302	7002	\N	1281.5
+../output/tests/test_67_t/8_yes_t_trim.wav	yes	1290.5	9	t	302	7003	\N	1287.5
+../output/tests/test_67_t/9_no_t_trim.wav	no	1303.42000000000007	10	t	302	7004	\N	1299.50999999999999
+../output/tests/test_68_f/0_yes_f_trim.wav	yes	1331.6099999999999	1	f	304	7005	\N	1328.68000000000006
+../output/tests/test_68_f/2_yes_f_trim.wav	yes	1343.33999999999992	3	f	304	7007	\N	1340.50999999999999
+../output/tests/test_68_f/3_yes_f_trim.wav	yes	1350.17000000000007	4	f	304	7008	\N	1348.49000000000001
+../output/tests/test_68_f/4_yes_f_trim.wav	yes	1357.6400000000001	5	f	304	7009	\N	1354.67000000000007
+../output/tests/test_68_f/5_no_f_trim.wav	no	1366.25	6	f	304	7010	\N	1362.34999999999991
+../output/tests/test_68_f/6_no_f_trim.wav	no	1374.08999999999992	7	f	304	7011	\N	1371.03999999999996
+../output/tests/test_68_f/7_yes_f_trim.wav	yes	1385.65000000000009	8	f	304	7012	\N	1381.83999999999992
+../output/tests/test_68_f/8_yes_f_trim.wav	yes	1391.07999999999993	9	f	304	7013	\N	1389.48000000000002
+../output/tests/test_68_f/9_yes_f_trim.wav	yes	1399.74000000000001	10	f	304	7014	\N	1398.48000000000002
+../output/tests/test_69_t/4_no_t_trim.wav	no	1504.53999999999996	5	t	309	7019	\N	1501.5
+../output/tests/test_69_t/6_yes_t_trim.wav	yes	1513.30999999999995	7	t	309	7021	\N	1511.44000000000005
+../output/tests/test_69_t/7_no_t_trim.wav	no	1518.51999999999998	8	t	309	7022	\N	1514.72000000000003
+../output/tests/test_69_t/9_no_t_trim.wav	no	1542.48000000000002	10	t	309	7024	\N	1539.5
+../output/tests/test_70_f/0_yes_f_trim.wav	yes	1560.94000000000005	1	f	301	7025	\N	1559.25
+../output/tests/test_70_f/1_yes_f_trim.wav	yes	1575.76999999999998	2	f	301	7026	\N	1573.31999999999994
+../output/tests/test_70_f/2_no_f_trim.wav	no	1579.79999999999995	3	f	301	7027	\N	1578.20000000000005
+../output/tests/test_70_f/3_yes_f_trim.wav	yes	1584.54999999999995	4	f	301	7028	\N	1582.65000000000009
+../output/tests/test_70_f/4_yes_f_trim.wav	yes	1592.69000000000005	5	f	301	7029	\N	1588.80999999999995
+../output/tests/test_70_f/5_yes_f_trim.wav	yes	1600.50999999999999	6	f	301	7030	\N	1597.5
+../output/tests/test_70_f/6_yes_f_trim.wav	yes	1606.07999999999993	7	f	301	7031	\N	1602.26999999999998
+../output/tests/test_70_f/9_yes_f_trim.wav	yes	1630.26999999999998	10	f	301	7034	\N	1627.54999999999995
+../output/tests/test_71_f/0_yes_f_trim.wav	yes	1654.83999999999992	1	f	300	7035	\N	1651.01999999999998
+../output/tests/test_71_f/1_yes_f_trim.wav	yes	1660.83999999999992	2	f	300	7036	\N	1657.90000000000009
+../output/tests/test_71_f/2_yes_f_trim.wav	yes	1666.23000000000002	3	f	300	7037	\N	1663.55999999999995
+../output/tests/test_71_f/3_no_f_trim.wav	no	1673.21000000000004	4	f	300	7038	\N	1670.33999999999992
+../output/tests/test_71_f/4_yes_f_trim.wav	yes	1676.69000000000005	5	f	300	7039	\N	1675.08999999999992
+../output/tests/test_71_f/5_yes_f_trim.wav	yes	1681.41000000000008	6	f	300	7040	\N	1678.34999999999991
+../output/tests/test_71_f/6_yes_f_trim.wav	yes	1684.86999999999989	7	f	300	7041	\N	1683.20000000000005
+../output/tests/test_71_f/7_yes_f_trim.wav	yes	1688.42000000000007	8	f	300	7042	\N	1686.45000000000005
+../output/tests/test_71_f/8_yes_f_trim.wav	yes	1691.36999999999989	9	f	300	7043	\N	1690.08999999999992
+../output/tests/test_71_f/9_no_f_trim.wav	no	1697.30999999999995	10	f	300	7044	\N	1693.50999999999999
+../output/tests/test_72_f/0_no_f_trim.wav	no	1715.61999999999989	1	f	297	7045	\N	1712.65000000000009
+../output/tests/test_72_f/1_yes_f_trim.wav	yes	1720.98000000000002	2	f	297	7046	\N	1718.6400000000001
+../output/tests/test_72_f/2_no_f_trim.wav	no	1726.40000000000009	3	f	297	7047	\N	1724
+../output/tests/test_72_f/3_no_f_trim.wav	no	1730.92000000000007	4	f	297	7048	\N	1729.04999999999995
+../output/tests/test_72_f/4_yes_f_trim.wav	yes	1735.20000000000005	5	f	297	7049	\N	1733.59999999999991
+../output/tests/test_72_f/5_no_f_trim.wav	no	1739.23000000000002	6	f	297	7050	\N	1737.25
+../output/tests/test_72_f/6_yes_f_trim.wav	yes	1743.3599999999999	7	f	297	7051	\N	1741.69000000000005
+../output/tests/test_72_f/7_yes_f_trim.wav	yes	1749.33999999999992	8	f	297	7052	\N	1745.50999999999999
+../output/tests/test_72_f/8_yes_f_trim.wav	yes	1755.1400000000001	9	f	297	7053	\N	1752.49000000000001
+../output/tests/test_72_f/9_yes_f_trim.wav	yes	1764.54999999999995	10	f	297	7054	\N	1761.5
+../output/tests/test_73_t/0_yes_t_trim.wav	yes	1790.1099999999999	1	t	305	7055	\N	1787.40000000000009
+../output/tests/test_73_t/1_yes_t_trim.wav	yes	1794.67000000000007	2	t	305	7056	\N	1791.67000000000007
+../output/tests/test_73_t/2_no_t_trim.wav	no	1798.70000000000005	3	t	305	7057	\N	1795.82999999999993
+../output/tests/test_73_t/3_no_t_trim.wav	no	1803.43000000000006	4	t	305	7058	\N	1800.5
+../output/tests/test_73_t/4_no_t_trim.wav	no	1807.07999999999993	5	t	305	7059	\N	1805.48000000000002
+../output/tests/test_73_t/5_no_t_trim.wav	no	1811.59999999999991	6	t	305	7060	\N	1808.94000000000005
+../output/tests/test_73_t/6_yes_t_trim.wav	yes	1815.03999999999996	7	t	305	7061	\N	1813.78999999999996
+../output/tests/test_73_t/7_no_t_trim.wav	no	1818.02999999999997	8	t	305	7062	\N	1816.32999999999993
+../output/tests/test_73_t/9_no_t_trim.wav	no	1829.97000000000003	10	t	305	7064	\N	1827.5
+../output/tests/test_74_f/0_yes_f_trim.wav	yes	1845.3599999999999	1	f	299	7065	\N	1842.69000000000005
+../output/tests/test_74_f/1_no_f_trim.wav	no	1851.92000000000007	2	f	299	7066	\N	1848.96000000000004
+../output/tests/test_74_f/2_yes_f_trim.wav	yes	1858.23000000000002	3	f	299	7067	\N	1854.44000000000005
+../output/tests/test_74_f/3_yes_f_trim.wav	yes	1862.45000000000005	4	f	299	7068	\N	1859.50999999999999
+../output/tests/test_74_f/4_no_f_trim.wav	no	1870.56999999999994	5	f	299	7069	\N	1867.5
+../output/tests/test_74_f/5_yes_f_trim.wav	yes	1881.19000000000005	6	f	299	7070	\N	1879.49000000000001
+../output/tests/test_74_f/6_no_f_trim.wav	no	1886.86999999999989	7	f	299	7071	\N	1884.5
+../output/tests/test_74_f/7_yes_f_trim.wav	yes	1889.80999999999995	8	f	299	7072	\N	1888.53999999999996
+../output/tests/test_74_f/9_yes_f_trim.wav	yes	1903.46000000000004	10	f	299	7074	\N	1900.5
+../output/tests/test_75_f/0_yes_f_trim.wav	yes	1919.98000000000002	1	f	292	7075	\N	1918.28999999999996
+../output/tests/test_75_f/1_no_f_trim.wav	no	1924.94000000000005	2	f	292	7076	\N	1922.25
+../output/tests/test_75_f/2_yes_f_trim.wav	yes	1930.47000000000003	3	f	292	7077	\N	1927.50999999999999
+../output/tests/test_75_f/3_yes_f_trim.wav	yes	1935.69000000000005	4	f	292	7078	\N	1931.78999999999996
+../output/tests/test_75_f/4_no_f_trim.wav	no	1940.66000000000008	5	f	292	7079	\N	1938.66000000000008
+../output/tests/test_75_f/5_no_f_trim.wav	no	1945.84999999999991	6	f	292	7080	\N	1942.02999999999997
+../output/tests/test_75_f/6_yes_f_trim.wav	yes	1949.47000000000003	7	f	292	7081	\N	1947.8900000000001
+../output/tests/test_75_f/7_yes_f_trim.wav	yes	1952.73000000000002	8	f	292	7082	\N	1950.83999999999992
+../output/tests/test_75_f/8_yes_f_trim.wav	yes	1959.33999999999992	9	f	292	7083	\N	1956.5
+../output/tests/test_75_f/9_yes_f_trim.wav	yes	1969.52999999999997	10	f	292	7084	\N	1966.5
+../output/tests/test_76_3/0_yes_trim.wav	yes	50.7790000000000035	1	f	59	7085	\N	47.7154999999999987
+../output/tests/test_76_3/2_yes_trim.wav	yes	62.9440999999999988	3	t	59	7087	\N	60.2503999999999991
+../output/tests/test_76_3/3_no_trim.wav	no	66.4967999999999932	4	t	59	7088	\N	64.8006000000000029
+../output/tests/test_76_3/5_no_trim.wav	no	74.3002000000000038	6	f	59	7090	\N	72.6995000000000005
+../output/tests/test_76_3/6_yes_trim.wav	yes	79.3380999999999972	7	f	59	7091	\N	76.3626000000000005
+../output/tests/test_76_3/9_no_trim.wav	no	99.7023999999999972	10	t	59	7094	\N	96.8640000000000043
+../output/tests/test_77_2/5_yes_trim.wav	yes	194.394000000000005	6	f	239	7100	\N	191.347000000000008
+../output/tests/test_77_2/8_no_trim.wav	no	208.792000000000002	9	t	239	7103	\N	206.855999999999995
+../output/tests/test_77_2/9_trim.wav	no	212.598000000000013	10	f	239	7104	\N	211.003999999999991
+../output/tests/test_78_2/0_yes_trim.wav	yes	245.062000000000012	1	f	99	7105	\N	242.010999999999996
+../output/tests/test_78_2/1_yes_trim.wav	yes	250.262	2	f	99	7106	\N	247.281000000000006
+../output/tests/test_78_2/2_no_trim.wav	no	254.116000000000014	3	f	99	7107	\N	251.740000000000009
+../output/tests/test_78_2/3_yes_trim.wav	yes	258.273000000000025	4	f	99	7108	\N	255.301999999999992
+../output/tests/test_78_2/7_yes_trim.wav	yes	273.901999999999987	8	f	99	7112	\N	270.863
+../output/tests/test_79_2/0_yes_trim.wav	yes	370.367999999999995	1	f	169	7115	\N	367.343000000000018
+../output/tests/test_79_2/1_yes_trim.wav	yes	376.548000000000002	2	f	169	7116	\N	372.72199999999998
+../output/tests/test_79_2/2_yes_trim.wav	yes	382.307000000000016	3	f	169	7117	\N	379.591000000000008
+../output/tests/test_79_2/3_yes_trim.wav	yes	387.930000000000007	4	f	169	7118	\N	384.867000000000019
+../output/tests/test_79_2/4_yes_trim.wav	yes	392.096000000000004	5	f	169	7119	\N	390.846000000000004
+../output/tests/test_79_2/5_no_trim.wav	no	397.519999999999982	6	f	169	7120	\N	393.713999999999999
+../output/tests/test_79_2/8_yes_trim.wav	yes	410.52800000000002	9	f	169	7123	\N	408.850999999999999
+../output/tests/test_79_2/9_no_trim.wav	no	415.214999999999975	10	f	169	7124	\N	412.855000000000018
+../output/tests/test_80_1/0_yes_trim.wav	yes	455.411000000000001	1	t	199	7125	\N	452.367000000000019
+../output/tests/test_80_1/1_yes_trim.wav	yes	460.764999999999986	2	f	199	7126	\N	456.944000000000017
+../output/tests/test_80_1/3_yes_trim.wav	yes	468.701000000000022	4	f	199	7128	\N	466.355000000000018
+../output/tests/test_80_1/4_yes_trim.wav	yes	471.797000000000025	5	f	199	7129	\N	469.903999999999996
+../output/tests/test_80_1/6_yes_trim.wav	yes	480.504999999999995	7	f	199	7131	\N	478.822000000000003
+../output/tests/test_81_1/0_no_trim.wav	no	554.787000000000035	1	f	79	7135	\N	553.212999999999965
+../output/tests/test_81_1/1_yes_trim.wav	yes	559.500999999999976	2	f	79	7136	\N	556.573999999999955
+../output/tests/test_81_1/2_yes_trim.wav	yes	564.870999999999981	3	f	79	7137	\N	561.049999999999955
+../output/tests/test_81_1/3_trim.wav	no	569.809999999999945	4	t	79	7138	\N	566.865000000000009
+../output/tests/test_81_1/4_yes_trim.wav	yes	573.203999999999951	5	t	79	7139	\N	571.912000000000035
+../output/tests/test_81_1/5_yes_trim.wav	yes	577.546000000000049	6	t	79	7140	\N	575.663000000000011
+../output/tests/test_81_1/6_trim.wav	no	582.370000000000005	7	t	79	7141	\N	579.725999999999999
+../output/tests/test_81_1/7_yes_trim.wav	yes	589.851999999999975	8	f	79	7142	\N	586.861999999999966
+../output/tests/test_81_1/8_no_trim.wav	no	593.520999999999958	9	t	79	7143	\N	591.84699999999998
+../output/tests/test_81_1/9_yes_trim.wav	yes	599.557999999999993	10	f	79	7144	\N	596.861999999999966
+../output/tests/test_82_1/0_trim.wav	no	641.91700000000003	1	t	46	7145	\N	639.557999999999993
+../output/tests/test_82_1/1_yes_trim.wav	yes	647.863000000000056	2	f	46	7146	\N	643.932999999999993
+../output/tests/test_82_1/2_trim.wav	no	651.576999999999998	3	f	46	7147	\N	649.989000000000033
+../output/tests/test_82_1/3_no_trim.wav	no	655.537000000000035	4	t	46	7148	\N	653.851999999999975
+../output/tests/test_82_1/4_trim.wav	no	659.416000000000054	5	t	46	7149	\N	657.503000000000043
+../output/tests/test_82_1/5_trim.wav	yes	664.922000000000025	6	t	46	7150	\N	661.866999999999962
+../output/tests/test_82_1/6_trim.wav	yes	669.131999999999948	7	t	46	7151	\N	666.129999999999995
+../output/tests/test_82_1/7_trim.wav	no	674.710000000000036	8	t	46	7152	\N	670.879000000000019
+../output/tests/test_82_1/8_trim.wav	no	679.803999999999974	9	f	46	7153	\N	676.865000000000009
+../output/tests/test_82_1/9_trim.wav	no	684.549999999999955	10	t	46	7154	\N	681.857999999999947
+../output/tests/test_83_2/0_trim.wav	no	731.129999999999995	1	f	109	7155	\N	728.749000000000024
+../output/tests/test_83_2/1_trim.wav	no	736.356999999999971	2	f	109	7156	\N	733.413000000000011
+../output/tests/test_83_2/2_trim.wav	yes	740.926000000000045	3	f	109	7157	\N	737.876999999999953
+../output/tests/test_83_2/3_trim.wav	no	744.932000000000016	4	t	109	7158	\N	741.94399999999996
+../output/tests/test_83_2/4_trim.wav	no	749.868000000000052	5	t	109	7159	\N	746.865999999999985
+../output/tests/test_83_2/5_trim.wav	no	754.76400000000001	6	t	109	7160	\N	751.831999999999994
+../output/tests/test_83_2/6_trim.wav	no	757.888000000000034	7	f	109	7161	\N	756.280999999999949
+../output/tests/test_83_2/7_yes_trim.wav	yes	762.253000000000043	8	f	109	7162	\N	759.241999999999962
+../output/tests/test_83_2/8_trim.wav	no	765.567000000000007	9	t	109	7163	\N	763.850999999999999
+../output/tests/test_83_2/9_trim.wav	no	772.793999999999983	10	t	109	7164	\N	770.854000000000042
+../output/tests/test_84_3/0_trim.wav	no	792.322999999999979	1	t	279	7165	\N	789.388000000000034
+../output/tests/test_84_3/1_yes_trim.wav	yes	795.024999999999977	2	t	279	7166	\N	793.432999999999993
+../output/tests/test_84_3/2_trim.wav	no	799.427999999999997	3	t	279	7167	\N	796.390999999999963
+../output/tests/test_84_3/3_yes_trim.wav	yes	804.009999999999991	4	t	279	7168	\N	801.057000000000016
+../output/tests/test_84_3/4_trim.wav	no	807.480999999999995	5	f	279	7169	\N	805.11099999999999
+../output/tests/test_84_3/5_yes_trim.wav	yes	811.097999999999956	6	f	279	7170	\N	809.841999999999985
+../output/tests/test_84_3/6_trim.wav	no	814.692000000000007	7	f	279	7171	\N	812.690000000000055
+../output/tests/test_84_3/7_yes_trim.wav	yes	818.11099999999999	8	f	279	7172	\N	816.437000000000012
+../output/tests/test_84_3/8_trim.wav	no	825.691000000000031	9	t	279	7173	\N	821.870999999999981
+../output/tests/test_84_3/9_trim.wav	no	833.923999999999978	10	t	279	7174	\N	830.863000000000056
+../output/tests/test_85_2/0_yes_trim.wav	yes	861.342999999999961	1	f	129	7175	\N	859.025999999999954
+../output/tests/test_85_2/1_trim.wav	no	864.586999999999989	2	f	129	7176	\N	862.572000000000003
+../output/tests/test_85_2/2_yes_trim.wav	yes	868.649999999999977	3	f	129	7177	\N	865.927000000000021
+../output/tests/test_85_2/3_trim.wav	yes	872.874000000000024	4	f	129	7178	\N	869.889999999999986
+../output/tests/test_85_2/4_trim.wav	no	875.772000000000048	5	t	129	7179	\N	873.839000000000055
+../output/tests/test_85_2/5_yes_trim.wav	yes	879.976999999999975	6	f	129	7180	\N	876.899000000000001
+../output/tests/test_85_2/6_trim.wav	no	882.797000000000025	7	t	129	7181	\N	881.147000000000048
+../output/tests/test_85_2/7_trim.wav	no	887.274000000000001	8	f	129	7182	\N	884.307999999999993
+../output/tests/test_85_2/8_trim.wav	no	893.788999999999987	9	f	129	7183	\N	890.865000000000009
+../output/tests/test_85_2/9_trim.wav	no	898.528999999999996	10	t	129	7184	\N	895.861999999999966
+../output/tests/test_86_3/0_trim.wav	no	31.0777000000000001	1	f	119	7185	\N	28.7274999999999991
+../output/tests/test_86_3/1_yes_trim.wav	yes	34.9530999999999992	2	f	119	7186	\N	33.6773999999999987
+../output/tests/test_86_3/2_yes_trim.wav	yes	40.875	3	t	119	7187	\N	37.0512000000000015
+../output/tests/test_86_3/3_no_trim.wav	no	46.4025999999999996	4	f	119	7188	\N	44.8140000000000001
+../output/tests/test_86_3/4_yes_trim.wav	yes	56.7849999999999966	5	f	119	7189	\N	54.3004999999999995
+../output/tests/test_86_3/5_yes_trim.wav	yes	60.821399999999997	6	f	119	7190	\N	59.1486999999999981
+../output/tests/test_86_3/6_no_trim.wav	no	66.1636000000000024	7	t	119	7191	\N	63.1148999999999987
+../output/tests/test_86_3/7_no_trim.wav	no	71.0609000000000037	8	t	119	7192	\N	69.1696000000000026
+../output/tests/test_86_3/8_yes_trim.wav	yes	75.9851000000000028	9	f	119	7193	\N	73.0297999999999945
+../output/tests/test_86_3/9_yes_trim.wav	yes	83.8093999999999966	10	f	119	7194	\N	80.8722000000000065
+../output/tests/test_87_2/0_yes_trim.wav	yes	119.665000000000006	1	t	69	7195	\N	118.070999999999998
+../output/tests/test_87_2/1_trim.wav	yes	124.611999999999995	2	t	69	7196	\N	122.230999999999995
+../output/tests/test_87_2/2_trim.wav	no	129.973000000000013	3	t	69	7197	\N	127.494
+../output/tests/test_87_2/3_trim.wav	no	135.223000000000013	4	t	69	7198	\N	132.25800000000001
+../output/tests/test_87_2/4_trim.wav	no	141.028999999999996	5	t	69	7199	\N	137.134999999999991
+../output/tests/test_87_2/5_no_trim.wav	no	146.949000000000012	6	t	69	7200	\N	143.11699999999999
+../output/tests/test_87_2/6_yes_trim.wav	yes	151.316000000000003	7	t	69	7201	\N	148.384999999999991
+../output/tests/test_87_2/7_trim.wav	no	156.234000000000009	8	t	69	7202	\N	153.251000000000005
+../output/tests/test_87_2/8_no_trim.wav	no	160.27600000000001	9	t	69	7203	\N	158.59899999999999
+../output/tests/test_87_2/9_yes_trim.wav	yes	167.752999999999986	10	t	69	7204	\N	165.860000000000014
+../output/tests/test_88_2/0_yes_trim.wav	yes	191.715000000000003	1	f	249	7205	\N	188.662000000000006
+../output/tests/test_88_2/1_yes_trim.wav	yes	197.778999999999996	2	t	249	7206	\N	194.830999999999989
+../output/tests/test_88_2/2_yes_trim.wav	yes	204.00200000000001	3	f	249	7207	\N	200.114000000000004
+../output/tests/test_88_2/3_trim.wav	no	208.159999999999997	4	f	249	7208	\N	206.563999999999993
+../output/tests/test_88_2/4_yes_trim.wav	yes	212.195999999999998	5	f	249	7209	\N	210.312000000000012
+../output/tests/test_88_2/5_yes_trim.wav	yes	216.122000000000014	6	f	249	7210	\N	214.853000000000009
+../output/tests/test_88_2/6_no_trim.wav	no	220.348000000000013	7	t	249	7211	\N	218.401999999999987
+../output/tests/test_88_2/7_no_trim.wav	no	224.807999999999993	8	t	249	7212	\N	222.455999999999989
+../output/tests/test_88_2/8_yes_trim.wav	yes	229.24199999999999	9	t	249	7213	\N	226.866000000000014
+../output/tests/test_88_2/9_no_trim.wav	no	234.538000000000011	10	t	249	7214	\N	232.858000000000004
+../output/tests/test_89_1/0_trim.wav	no	267.048000000000002	1	t	310	7215	\N	265.451999999999998
+../output/tests/test_89_1/1_trim.wav	no	271.177999999999997	2	t	310	7216	\N	269.507000000000005
+../output/tests/test_89_1/2_trim.wav	no	289.014999999999986	3	t	310	7217	\N	286.310000000000002
+../output/tests/test_89_1/3_yes_trim.wav	yes	293.75	4	t	310	7218	\N	290.771999999999991
+../output/tests/test_89_1/4_trim.wav	no	298.533000000000015	5	t	310	7219	\N	295.54000000000002
+../output/tests/test_89_1/5_trim.wav	no	302.295000000000016	6	t	310	7220	\N	300.293000000000006
+../output/tests/test_89_1/6_trim.wav	no	310.677999999999997	7	t	310	7221	\N	306.882000000000005
+../output/tests/test_89_1/7_yes_trim.wav	yes	315.947999999999979	8	t	310	7222	\N	312.064000000000021
+../output/tests/test_89_1/8_yes_trim.wav	yes	323.937999999999988	9	t	310	7223	\N	320.874000000000024
+../output/tests/test_89_1/9_trim.wav	no	328.812000000000012	10	t	310	7224	\N	325.872000000000014
+../output/tests/test_8_t/1_t_yes_trim.wav	yes	220.074999999999989	2	t	22	7226	\N	218.176999999999992
+../output/tests/test_8_t/2_t_yes_trim.wav	yes	222.975999999999999	3	t	22	7227	\N	221.722000000000008
+../output/tests/test_8_t/4_t_no_trim.wav	no	239.331999999999994	5	t	22	7229	\N	236.967999999999989
+../output/tests/test_8_t/7_t_yes_trim.wav	yes	274.870000000000005	8	t	22	7232	\N	271.920999999999992
+../output/tests/test_8_t/9_t_no_trim.wav	no	286.850999999999999	10	t	22	7234	\N	283.915999999999997
+../output/tests/test_90_1/0_yes_trim.wav	yes	359.184000000000026	1	f	209	7235	\N	356.244000000000028
+../output/tests/test_90_1/1_no_trim.wav	no	364.062000000000012	2	f	209	7236	\N	361.408000000000015
+../output/tests/test_90_1/2_yes_trim.wav	yes	368.033999999999992	3	f	209	7237	\N	366.759999999999991
+../output/tests/test_90_1/3_yes_trim.wav	yes	373.163000000000011	4	f	209	7238	\N	370.317999999999984
+../output/tests/test_90_1/4_trim.wav	no	380.521999999999991	5	t	209	7239	\N	376.697000000000003
+../output/tests/test_90_1/5_no_trim.wav	no	386.211999999999989	6	t	209	7240	\N	383.86099999999999
+../output/tests/test_90_1/6_no_trim.wav	no	393.855999999999995	7	f	209	7241	\N	390.869000000000028
+../output/tests/test_90_1/7_yes_trim.wav	yes	398.12700000000001	8	f	209	7242	\N	396.223000000000013
+../output/tests/test_90_1/8_trim.wav	no	404.930000000000007	9	f	209	7243	\N	401.870000000000005
+../output/tests/test_90_1/9_no_trim.wav	no	410.87299999999999	10	f	209	7244	\N	408.857000000000028
+../output/tests/test_91_1/0_no_trim.wav	no	433.446000000000026	1	f	159	7245	\N	431.850000000000023
+../output/tests/test_91_1/1_no_trim.wav	no	438.644000000000005	2	t	159	7246	\N	435.711000000000013
+../output/tests/test_91_1/2_trim.wav	no	444.942000000000007	3	t	159	7247	\N	441.879000000000019
+../output/tests/test_91_1/3_trim.wav	no	455.550000000000011	4	t	159	7248	\N	453.858000000000004
+../output/tests/test_91_1/4_no_trim.wav	no	461.913999999999987	5	f	159	7249	\N	458.87299999999999
+../output/tests/test_91_1/5_yes_trim.wav	yes	466.745000000000005	6	f	159	7250	\N	464.033999999999992
+../output/tests/test_91_1/6_yes_trim.wav	yes	471.459000000000003	7	f	159	7251	\N	469.093000000000018
+../output/tests/test_91_1/7_no_trim.wav	no	479.838000000000022	8	t	159	7252	\N	476.87299999999999
+../output/tests/test_91_1/8_no_trim.wav	no	487.850999999999999	9	f	159	7253	\N	484.87299999999999
+../output/tests/test_91_1/9_trim.wav	no	493.795999999999992	10	t	159	7254	\N	491.86099999999999
+../output/tests/test_92_2/0_yes_trim.wav	yes	540.144999999999982	1	f	139	7255	\N	537.183999999999969
+../output/tests/test_92_2/1_trim.wav	no	544.115999999999985	2	t	139	7256	\N	542.436000000000035
+../output/tests/test_92_2/2_yes_trim.wav	yes	549.176000000000045	3	f	139	7257	\N	546.201999999999998
+../output/tests/test_92_2/3_trim.wav	no	552.426000000000045	4	f	139	7258	\N	550.84699999999998
+../output/tests/test_92_2/4_trim.wav	no	555.701999999999998	5	f	139	7259	\N	553.696000000000026
+../output/tests/test_92_2/5_no_trim.wav	no	561.413000000000011	6	f	139	7260	\N	558.464000000000055
+../output/tests/test_92_2/6_no_trim.wav	no	566.616999999999962	7	f	139	7261	\N	563.633000000000038
+../output/tests/test_92_2/7_no_trim.wav	no	573.254999999999995	8	f	139	7262	\N	570.865999999999985
+../output/tests/test_92_2/8_trim.wav	no	579.922000000000025	9	t	139	7263	\N	576.874000000000024
+../output/tests/test_92_2/9_trim.wav	no	585.541000000000054	10	t	139	7264	\N	582.869000000000028
+../output/tests/test_93_2/0_yes_trim.wav	yes	605.903999999999996	1	f	89	7265	\N	603.206000000000017
+../output/tests/test_93_2/1_yes_trim.wav	yes	611.870999999999981	2	f	89	7266	\N	607.984000000000037
+../output/tests/test_93_2/2_yes_trim.wav	yes	616.610000000000014	3	f	89	7267	\N	613.952999999999975
+../output/tests/test_93_2/3_no_trim.wav	no	621.972999999999956	4	f	89	7268	\N	619.020999999999958
+../output/tests/test_93_2/4_yes_trim.wav	yes	625.412000000000035	5	f	89	7269	\N	623.471000000000004
+../output/tests/test_93_2/5_no_trim.wav	no	630.982999999999947	6	f	89	7270	\N	628.134000000000015
+../output/tests/test_93_2/6_yes_trim.wav	yes	635.975999999999999	7	f	89	7271	\N	634.293999999999983
+../output/tests/test_93_2/7_yes_trim.wav	yes	639.919999999999959	8	t	89	7272	\N	638.340000000000032
+../output/tests/test_93_2/8_yes_trim.wav	yes	646.424999999999955	9	f	89	7273	\N	642.613000000000056
+../output/tests/test_93_2/9_yes_trim.wav	yes	657.754000000000019	10	f	89	7274	\N	655.860000000000014
+../output/tests/test_95_3/0_yes_trim.wav	yes	50.2160000000000011	1	f	179	7275	\N	47.246299999999998
+../output/tests/test_95_3/1_no_trim.wav	no	56.9487000000000023	2	f	179	7276	\N	53.1259999999999977
+../output/tests/test_95_3/2_no_trim.wav	no	65.6326999999999998	3	t	179	7277	\N	62.6064999999999969
+../output/tests/test_95_3/3_yes_trim.wav	yes	70.9501000000000062	4	t	179	7278	\N	67.9776999999999987
+../output/tests/test_95_3/4_no_trim.wav	no	76.4759999999999991	5	t	179	7279	\N	73.5504999999999995
+../output/tests/test_95_3/5_no_trim.wav	no	82.0746000000000038	6	t	179	7280	\N	79.605400000000003
+../output/tests/test_95_3/6_no_trim.wav	no	88.2754999999999939	7	t	179	7281	\N	86.2676000000000016
+../output/tests/test_95_3/7_yes_trim.wav	yes	92.6877000000000066	8	t	179	7282	\N	91.408299999999997
+../output/tests/test_95_3/8_yes_trim.wav	yes	104.411000000000001	9	t	179	7283	\N	102.819000000000003
+../output/tests/test_95_3/9_yes_trim.wav	yes	116.486999999999995	10	f	179	7284	\N	114.599000000000004
+../output/tests/test_96_2/0_no_trim.wav	no	168.338999999999999	1	t	149	7285	\N	165.317000000000007
+../output/tests/test_96_2/1_trim.wav	no	172.519000000000005	2	t	149	7286	\N	170.576999999999998
+../output/tests/test_96_2/2_no_trim.wav	no	177.486999999999995	3	t	149	7287	\N	174.437999999999988
+../output/tests/test_96_2/3_yes_trim.wav	yes	181.086999999999989	4	t	149	7288	\N	179.488
+../output/tests/test_96_2/4_no_trim.wav	no	185.663999999999987	5	t	149	7289	\N	183.639999999999986
+../output/tests/test_96_2/5_no_trim.wav	no	189.25800000000001	6	t	149	7290	\N	187.586999999999989
+../output/tests/test_96_2/6_no_trim.wav	no	194.299000000000007	7	t	149	7291	\N	191.941000000000003
+../output/tests/test_96_2/7_no_trim.wav	no	204.562999999999988	8	t	149	7292	\N	201.61099999999999
+../output/tests/test_96_2/8_yes_trim.wav	yes	209.021999999999991	9	t	149	7293	\N	206.080000000000013
+../output/tests/test_96_2/9_yes_trim.wav	yes	218.567000000000007	10	t	149	7294	\N	215.61099999999999
+../output/tests/test_97_2/0_no_trim.wav	no	247.080000000000013	1	t	189	7295	\N	244.414999999999992
+../output/tests/test_97_2/1_yes_trim.wav	yes	250.350999999999999	2	t	189	7296	\N	248.760999999999996
+../output/tests/test_97_2/2_no_trim.wav	no	257.271000000000015	3	t	189	7297	\N	255.596000000000004
+../output/tests/test_97_2/3_no_trim.wav	no	261.915999999999997	4	t	189	7298	\N	258.86099999999999
+../output/tests/test_97_2/4_no_trim.wav	no	266.610000000000014	5	t	189	7299	\N	264.600000000000023
+../output/tests/test_97_2/5_yes_trim.wav	yes	272.45999999999998	6	t	189	7300	\N	269.610000000000014
+../output/tests/test_97_2/6_trim.wav	yes	275.826999999999998	7	t	189	7301	\N	274.552999999999997
+../output/tests/test_97_2/7_yes_trim.wav	yes	280.586000000000013	8	t	189	7302	\N	277.615999999999985
+../output/tests/test_97_2/8_no_trim.wav	no	288.968000000000018	9	t	189	7303	\N	286.603999999999985
+../output/tests/test_97_2/9_no_trim.wav	no	296.305999999999983	10	t	189	7304	\N	293.608000000000004
+../output/tests/test_98_3/0_no_trim.wav	no	323.26600000000002	1	t	259	7305	\N	320.235000000000014
+../output/tests/test_98_3/1_trim.wav	no	327.773000000000025	2	t	259	7306	\N	325.399000000000001
+../output/tests/test_98_3/2_yes_trim.wav	yes	333.971000000000004	3	f	259	7307	\N	330.074999999999989
+../output/tests/test_98_3/3_yes_trim.wav	yes	339.194000000000017	4	t	259	7308	\N	336.841999999999985
+../output/tests/test_98_3/4_no_trim.wav	no	344.559000000000026	5	t	259	7309	\N	341.607000000000028
+../output/tests/test_98_3/5_no_trim.wav	no	348.180000000000007	6	t	259	7310	\N	346.161999999999978
+../output/tests/test_98_3/6_yes_trim.wav	yes	352.596000000000004	7	t	259	7311	\N	349.61099999999999
+../output/tests/test_98_3/7_trim.wav	no	355.961999999999989	8	t	259	7312	\N	354.264999999999986
+../output/tests/test_98_3/8_no_trim.wav	no	361.187000000000012	9	t	259	7313	\N	359.595000000000027
+../output/tests/test_98_3/9_yes_trim.wav	yes	370.499000000000024	10	f	259	7314	\N	368.59899999999999
+../output/tests/test_99_3/0_no_trim.wav	no	394.043000000000006	1	t	229	7315	\N	391.098000000000013
+../output/tests/test_99_3/1_trim.wav	yes	399.269000000000005	2	t	229	7316	\N	396.564999999999998
+../output/tests/test_99_3/2_yes_trim.wav	yes	405.886000000000024	3	f	229	7317	\N	402.829000000000008
+../output/tests/test_99_3/3_no_trim.wav	no	409.670999999999992	4	f	229	7318	\N	408.081999999999994
+../output/tests/test_99_3/4_yes_trim.wav	yes	415.940999999999974	5	f	229	7319	\N	412.055000000000007
+../output/tests/test_99_3/5_yes_trim.wav	yes	420.281999999999982	6	f	229	7320	\N	417.319000000000017
+../output/tests/test_99_3/6_no_trim.wav	no	423.85899999999998	7	t	229	7321	\N	422.591000000000008
+../output/tests/test_99_3/7_yes_trim.wav	yes	429.267999999999972	8	f	229	7322	\N	427.596000000000004
+../output/tests/test_99_3/8_trim.wav	no	432.985000000000014	9	t	229	7323	\N	431.045999999999992
+../output/tests/test_99_3/9_no_trim.wav	no	441.596000000000004	10	f	229	7324	\N	438.61099999999999
+../output/tests/test_9_t/0_t_no_trim.wav	no	445.235000000000014	1	t	17	7325	\N	443.555000000000007
+../output/tests/test_9_t/1_t_no_trim.wav	no	450.365999999999985	2	t	17	7326	\N	447.97399999999999
+../output/tests/test_9_t/2_t_no_trim.wav	no	455.797000000000025	3	t	17	7327	\N	452.843999999999994
+../output/tests/test_9_t/5_t_no_trim.wav	no	484.386000000000024	6	t	17	7330	\N	481.732000000000028
+../output/tests/test_9_t/8_t_no_trim.wav	no	505.468999999999994	9	t	17	7333	\N	502.427999999999997
+../output/tests/test_9_t/9_t_yes_trim.wav	yes	513.849000000000046	10	t	17	7334	\N	510.915999999999997
+../output/tests/test_10_f/2_o.wav	null	620.307000000000016	3	f	9	6467	\N	616.519000000000005
+../output/tests/test_10_f/5_o.wav	null	634.495999999999981	6	f	9	6470	\N	631.529999999999973
+../output/tests/test_11_f/3_o.wav	null	713.563999999999965	4	f	5	6478	\N	711.658000000000015
+../output/tests/test_12_f/7_o.wav	null	824.504999999999995	8	f	11	6492	\N	822.903999999999996
+../output/tests/test_14_t/0_o.wav	null	949.421000000000049	1	f	44	6505	\N	947.822000000000003
+../output/tests/test_16_t/0_o.wav	null	1187.58999999999992	1	f	27	6525	\N	1184.91000000000008
+../output/tests/test_16_t/2_o.wav	null	1203.26999999999998	3	t	27	6527	\N	1200.29999999999995
+../output/tests/test_16_t/3_o.wav	null	1207.21000000000004	4	f	27	6528	\N	1205.53999999999996
+../output/tests/test_18_t/2_o.wav	null	1389.68000000000006	3	f	14	6547	\N	1387.73000000000002
+../output/tests/test_18_t/7_o.wav	null	1413.36999999999989	8	f	14	6552	\N	1410.91000000000008
+../output/tests/test_18_t/8_o.wav	null	1417.56999999999994	9	f	14	6553	\N	1414.88000000000011
+../output/tests/test_19_f/0_o.wav	null	23.4143000000000008	1	f	8	6555	\N	21.0701000000000001
+../output/tests/test_19_f/4_o.wav	null	50.025500000000001	5	f	8	6559	\N	47.0497000000000014
+../output/tests/test_19_f/7_o.wav	null	67.0448999999999984	8	f	8	6562	\N	65.117999999999995
+../output/tests/test_19_f/8_o.wav	null	72.1774000000000058	9	f	8	6563	\N	69.131299999999996
+../output/tests/test_20_f/4_o.wav	null	142.138000000000005	5	f	20	6569	\N	140.11699999999999
+../output/tests/test_21_f/1_o.wav	null	218.280000000000001	2	f	41	6576	\N	215.312999999999988
+../output/tests/test_21_f/2_o.wav	null	222.757000000000005	3	f	41	6577	\N	220.375
+../output/tests/test_21_f/6_o.wav	null	238.965000000000003	7	f	41	6581	\N	237.02000000000001
+../output/tests/test_21_f/9_o.wav	null	257.125999999999976	10	f	41	6584	\N	255.115000000000009
+../output/tests/test_22_t/1_o.wav	null	30.1565000000000012	2	f	21	6586	\N	26.3487000000000009
+../output/tests/test_22_t/2_o.wav	null	34.4450999999999965	3	f	21	6587	\N	32.4142999999999972
+../output/tests/test_22_t/3_o.wav	null	38.1638999999999982	4	f	21	6588	\N	36.2674000000000021
+../output/tests/test_22_t/4_o.wav	null	41.6049000000000007	5	f	21	6589	\N	39.9183000000000021
+../output/tests/test_22_t/5_o.wav	null	44.5557999999999979	6	f	21	6590	\N	42.9637000000000029
+../output/tests/test_22_t/6_o.wav	null	49.8115999999999985	7	f	21	6591	\N	46.3575000000000017
+../output/tests/test_22_t/7_o.wav	null	55.3417999999999992	8	f	21	6592	\N	52.3596000000000004
+../output/tests/test_22_t/8_o.wav	null	65.4106000000000023	9	f	21	6593	\N	62.3599999999999994
+../output/tests/test_22_t/9_o.wav	null	74.1859000000000037	10	f	21	6594	\N	71.3584000000000032
+../output/tests/test_23_f/2_o.wav	null	117.588999999999999	3	f	16	6597	\N	114.596000000000004
+../output/tests/test_23_f/7_o.wav	null	141.931999999999988	8	f	16	6602	\N	140.342999999999989
+../output/tests/test_23_f/8_o.wav	null	150.218999999999994	9	f	16	6603	\N	147.22399999999999
+../output/tests/test_25_t/0_o.wav	null	29.7091999999999992	1	t	45	6605	\N	28.1132999999999988
+../output/tests/test_25_t/1_o.wav	null	37.0251999999999981	2	t	45	6606	\N	35.0974999999999966
+../output/tests/test_25_t/2_o.wav	null	46.6156999999999968	3	t	45	6607	\N	43.673099999999998
+../output/tests/test_25_t/6_o.wav	null	75.758899999999997	7	t	45	6611	\N	71.9450999999999965
+../output/tests/test_25_t/7_o.wav	null	85.1208000000000027	8	f	45	6612	\N	82.7445000000000022
+../output/tests/test_25_t/9_o.wav	null	99.3516999999999939	10	t	45	6614	\N	97.4548000000000059
+../output/tests/test_26_t/2_o.wav	null	164.623999999999995	3	t	19	6617	\N	161.575999999999993
+../output/tests/test_26_t/4_o.wav	null	174.951999999999998	5	t	19	6619	\N	173.269000000000005
+../output/tests/test_26_t/5_o.wav	null	185.194999999999993	6	t	19	6620	\N	183.25200000000001
+../output/tests/test_26_t/6_o.wav	null	191.956999999999994	7	t	19	6621	\N	190.045999999999992
+../output/tests/test_26_t/7_o.wav	null	199.060000000000002	8	f	19	6622	\N	197.048000000000002
+../output/tests/test_26_t/9_o.wav	null	218.173000000000002	10	t	19	6624	\N	215.463999999999999
+../output/tests/test_27_t/1_o.wav	null	251.77000000000001	2	t	2	6626	\N	250.185000000000002
+../output/tests/test_27_t/3_o.wav	null	265.615999999999985	4	t	2	6628	\N	263.233000000000004
+../output/tests/test_27_t/4_o.wav	null	272.944999999999993	5	t	2	6629	\N	271.019000000000005
+../output/tests/test_27_t/5_o.wav	null	282.444999999999993	6	f	2	6630	\N	280.557000000000016
+../output/tests/test_28_f/1_o.wav	null	353.247000000000014	2	f	15	6636	\N	351.649999999999977
+../output/tests/test_28_f/2_o.wav	null	361.812000000000012	3	f	15	6637	\N	359.879000000000019
+../output/tests/test_28_f/5_o.wav	null	377.25	6	f	15	6640	\N	374.886000000000024
+../output/tests/test_28_f/7_o.wav	null	393.024999999999977	8	f	15	6642	\N	390.369000000000028
+../output/tests/test_28_f/8_o.wav	null	403.024999999999977	9	f	15	6643	\N	400.040999999999997
+../output/tests/test_29_t/2_o.wav	null	507.665999999999997	3	t	7	6647	\N	505.653999999999996
+../output/tests/test_29_t/7_o.wav	null	533.111999999999966	8	f	7	6652	\N	531.440000000000055
+../output/tests/test_30_f/8_o.wav	null	633.889999999999986	9	f	23	6663	\N	631.953999999999951
+../output/tests/test_34_f/0_o.wav	null	189.12700000000001	1	f	43	6685	\N	187.521999999999991
+../output/tests/test_34_f/1_o.wav	null	201.996000000000009	2	f	43	6686	\N	199.066000000000003
+../output/tests/test_34_f/2_o.wav	null	212.751000000000005	3	f	43	6687	\N	209.794999999999987
+../output/tests/test_34_f/3_o.wav	null	219.972000000000008	4	f	43	6688	\N	218.296999999999997
+../output/tests/test_34_f/4_o.wav	null	228.370000000000005	5	f	43	6689	\N	226.365000000000009
+../output/tests/test_34_f/5_o.wav	null	239.353000000000009	6	f	43	6690	\N	236.37700000000001
+../output/tests/test_34_f/6_o.wav	null	250.556999999999988	7	f	43	6691	\N	247.570999999999998
+../output/tests/test_34_f/7_o.wav	null	264.706000000000017	8	f	43	6692	\N	262.375999999999976
+../output/tests/test_34_f/8_o.wav	null	274.267999999999972	9	f	43	6693	\N	271.58499999999998
+../output/tests/test_34_f/9_o.wav	null	289.899999999999977	10	f	43	6694	\N	286.887
+../output/tests/test_37_t/2_o.wav	null	29.4942999999999991	3	f	37	6697	\N	27.0118000000000009
+../output/tests/test_37_t/7_o.wav	null	60.2606999999999999	8	f	37	6702	\N	58.3293999999999997
+../output/tests/test_38_t/3_o.wav	null	164.795999999999992	4	f	28	6708	\N	161.955999999999989
+../output/tests/test_38_t/6_o.wav	null	181.236999999999995	7	t	28	6711	\N	178.294000000000011
+../output/tests/test_38_t/8_o.wav	null	195.211999999999989	9	f	28	6713	\N	193.282000000000011
+../output/tests/test_38_t/9_o.wav	null	205.545999999999992	10	t	28	6714	\N	204.275000000000006
+../output/tests/test_39_f/3_o.wav	null	248.413000000000011	4	f	4	6718	\N	246.466000000000008
+../output/tests/test_39_f/5_o.wav	null	256.677000000000021	6	f	4	6720	\N	253.977000000000004
+../output/tests/test_39_f/7_o.wav	null	268.963000000000022	8	f	4	6722	\N	267.278999999999996
+../output/tests/test_39_f/9_o.wav	null	285.353999999999985	10	f	4	6724	\N	282.295999999999992
+../output/tests/test_40_f/0_o.wav	null	341.245000000000005	1	f	30	6725	\N	337.442999999999984
+../output/tests/test_40_f/2_o.wav	null	352.572999999999979	3	f	30	6727	\N	350.97399999999999
+../output/tests/test_40_f/5_o.wav	null	372.915999999999997	6	f	30	6730	\N	369.942999999999984
+../output/tests/test_40_f/6_o.wav	null	379.348000000000013	7	f	30	6731	\N	376.295000000000016
+../output/tests/test_40_f/7_o.wav	null	385.940999999999974	8	f	30	6732	\N	383.29000000000002
+../output/tests/test_42_t/1_o.wav	null	699.881999999999948	2	f	13	6746	\N	696.892000000000053
+../output/tests/test_42_t/2_o.wav	null	714.503000000000043	3	f	13	6747	\N	712.491999999999962
+../output/tests/test_42_t/4_o.wav	null	731.037000000000035	5	t	13	6749	\N	728.214000000000055
+../output/tests/test_43_t/0_o.wav	null	795.066000000000031	1	t	6	6755	\N	792.405999999999949
+../output/tests/test_43_t/3_o.wav	null	810.152000000000044	4	f	6	6758	\N	806.354000000000042
+../output/tests/test_44_t/0_o.wav	null	870.407000000000039	1	f	33	6765	\N	867.729000000000042
+../output/tests/test_45_t/2_o.wav	null	949.607999999999947	3	f	10	6777	\N	946.671000000000049
+../output/tests/test_46_f/3_o.wav	null	1065.88000000000011	4	f	32	6788	\N	1063.01999999999998
+../output/tests/test_47_f/2_o.wav	null	1423.44000000000005	3	f	34	6797	\N	1421.83999999999992
+../output/tests/test_47_f/6_o.wav	null	1444.70000000000005	7	f	34	6801	\N	1442.74000000000001
+../output/tests/test_48_f/4_o.wav	null	1533.8900000000001	5	f	31	6809	\N	1531.06999999999994
+../output/tests/test_48_f/5_o.wav	null	1537.21000000000004	6	f	31	6810	\N	1535.51999999999998
+../output/tests/test_48_f/8_o.wav	null	1549.23000000000002	9	f	31	6813	\N	1547.28999999999996
+../output/tests/test_48_f/9_o.wav	null	1557.08999999999992	10	f	31	6814	\N	1553.29999999999995
+../output/tests/test_49_t/1_o.wav	null	1586.19000000000005	2	t	35	6816	\N	1582.40000000000009
+../output/tests/test_49_t/2_o.wav	null	1590.27999999999997	3	f	35	6817	\N	1587.28999999999996
+../output/tests/test_49_t/4_o.wav	null	1600.24000000000001	5	t	35	6819	\N	1596.32999999999993
+../output/tests/test_49_t/8_o.wav	null	1619.34999999999991	9	f	35	6823	\N	1616.29999999999995
+../output/tests/test_50_t/0_o.wav	null	1656.27999999999997	1	f	24	6825	\N	1653.90000000000009
+../output/tests/test_50_t/1_o.wav	null	1661.95000000000005	2	f	24	6826	\N	1658.98000000000002
+../output/tests/test_50_t/3_o.wav	null	1671.47000000000003	4	f	24	6828	\N	1668.49000000000001
+../output/tests/test_50_t/8_o.wav	null	1696.96000000000004	9	t	24	6833	\N	1694.03999999999996
+../output/tests/test_50_t/9_o.wav	null	1704.93000000000006	10	t	24	6834	\N	1702.28999999999996
+../output/tests/test_51_t/1_o.wav	null	1891.40000000000009	2	f	12	6836	\N	1887.48000000000002
+../output/tests/test_53_t/0_o.wav	null	2094.76999999999998	1	t	29	6855	\N	2091.80000000000018
+../output/tests/test_55_f/0_o.wav	null	2231.34000000000015	1	f	3	6875	\N	2228.86000000000013
+../output/tests/test_56_f/4_o.wav	null	44.421599999999998	5	f	307	6889	\N	42.4874000000000009
+../output/tests/test_56_f/7_o.wav	null	59.3310999999999993	8	f	307	6892	\N	55.5091999999999999
+../output/tests/test_57_t/0_o.wav	null	85.5100999999999942	1	f	306	6895	\N	83.1417000000000002
+../output/tests/test_57_t/5_o.wav	null	116.372	6	f	306	6900	\N	113.894999999999996
+../output/tests/test_59_f/0_o.wav	null	164.867999999999995	1	f	291	6915	\N	161.878999999999991
+../output/tests/test_59_f/1_o.wav	null	168.700999999999993	2	f	291	6916	\N	166.340000000000003
+../output/tests/test_59_f/2_o.wav	null	172.271999999999991	3	f	291	6917	\N	170.391999999999996
+../output/tests/test_59_f/3_o.wav	null	175.778999999999996	4	f	291	6918	\N	173.837999999999994
+../output/tests/test_59_f/9_o.wav	null	204.082999999999998	10	f	291	6924	\N	202.48599999999999
+../output/tests/test_60_t/0_o.wav	null	343.987000000000023	1	f	289	6925	\N	342.339999999999975
+../output/tests/test_60_t/1_o.wav	null	349.079000000000008	2	f	289	6926	\N	347.495999999999981
+../output/tests/test_60_t/2_o.wav	null	354.48399999999998	3	f	289	6927	\N	352.452999999999975
+../output/tests/test_60_t/3_o.wav	null	364.259999999999991	4	f	289	6928	\N	361.283999999999992
+../output/tests/test_60_t/6_o.wav	null	383.322000000000003	7	f	289	6931	\N	379.428999999999974
+../output/tests/test_60_t/7_o.wav	null	388.961999999999989	8	f	289	6932	\N	386.596000000000004
+../output/tests/test_60_t/9_o.wav	null	405.552000000000021	10	f	289	6934	\N	402.502999999999986
+../output/tests/test_61_t/0_o.wav	null	421.968000000000018	1	f	308	6935	\N	419.298999999999978
+../output/tests/test_61_t/1_o.wav	null	430.115999999999985	2	f	308	6936	\N	426.286999999999978
+../output/tests/test_61_t/5_o.wav	null	453.773000000000025	6	f	308	6940	\N	451.759999999999991
+../output/tests/test_61_t/6_o.wav	null	458.050999999999988	7	t	308	6941	\N	456.113999999999976
+../output/tests/test_61_t/7_o.wav	null	463.560999999999979	8	f	308	6942	\N	461.872000000000014
+../output/tests/test_61_t/8_o.wav	null	470.062999999999988	9	f	308	6943	\N	468.482000000000028
+../output/tests/test_61_t/9_o.wav	null	477.324000000000012	10	f	308	6944	\N	474.355000000000018
+../output/tests/test_62_t/4_o.wav	null	542.08299999999997	5	f	294	6949	\N	540.481999999999971
+../output/tests/test_62_t/7_o.wav	null	570.436000000000035	8	f	294	6952	\N	568.48599999999999
+../output/tests/test_62_t/8_o.wav	null	579.976999999999975	9	f	294	6953	\N	577.496999999999957
+../output/tests/test_63_f/2_o.wav	null	632.25	3	f	296	6957	\N	629.201000000000022
+../output/tests/test_63_f/7_o.wav	null	658.950000000000045	8	f	296	6962	\N	656.496999999999957
+../output/tests/test_64_f/2_o.wav	null	734.400999999999954	3	f	295	6967	\N	732.719000000000051
+../output/tests/test_64_f/4_o.wav	null	742.946000000000026	5	f	295	6969	\N	740.229000000000042
+../output/tests/test_64_f/5_o.wav	null	751.081000000000017	6	f	295	6970	\N	749.48599999999999
+../output/tests/test_64_f/6_o.wav	null	758.854000000000042	7	f	295	6971	\N	756.495000000000005
+../output/tests/test_64_f/7_o.wav	null	768.450000000000045	8	f	295	6972	\N	765.499000000000024
+../output/tests/test_64_f/8_o.wav	null	776.730999999999995	9	f	295	6973	\N	774.275999999999954
+../output/tests/test_65_f/1_o.wav	null	1110.45000000000005	2	f	303	6976	\N	1107.99000000000001
+../output/tests/test_65_f/5_o.wav	null	1137.48000000000002	6	f	303	6980	\N	1134.5
+../output/tests/test_65_f/9_o.wav	null	1156.94000000000005	10	f	303	6984	\N	1155.02999999999997
+../output/tests/test_66_f/3_o.wav	null	1188.88000000000011	4	f	298	6988	\N	1187.28999999999996
+../output/tests/test_66_f/7_o.wav	null	1212.8599999999999	8	f	298	6992	\N	1209.03999999999996
+../output/tests/test_66_f/8_o.wav	null	1218.80999999999995	9	f	298	6993	\N	1216.80999999999995
+../output/tests/test_68_f/1_o.wav	null	1337.57999999999993	2	f	304	7006	\N	1335.6400000000001
+../output/tests/test_69_t/0_o.wav	null	1484.96000000000004	1	f	309	7015	\N	1481.88000000000011
+../output/tests/test_69_t/1_o.wav	null	1488.51999999999998	2	f	309	7016	\N	1486.93000000000006
+../output/tests/test_69_t/2_o.wav	null	1493.44000000000005	3	f	309	7017	\N	1490.49000000000001
+../output/tests/test_69_t/3_o.wav	null	1497.90000000000009	4	f	309	7018	\N	1494.96000000000004
+../output/tests/test_69_t/5_o.wav	null	1509.16000000000008	6	f	309	7020	\N	1507.49000000000001
+../output/tests/test_69_t/8_o.wav	null	1523.50999999999999	9	f	309	7023	\N	1521.49000000000001
+../output/tests/test_70_f/7_o.wav	null	1613.29999999999995	8	f	301	7032	\N	1609.50999999999999
+../output/tests/test_70_f/8_o.wav	null	1625.83999999999992	9	f	301	7033	\N	1623.49000000000001
+../output/tests/test_73_t/8_o.wav	null	1822.50999999999999	9	f	305	7063	\N	1820.49000000000001
+../output/tests/test_74_f/8_o.wav	null	1895.07999999999993	9	f	299	7073	\N	1893.48000000000002
+../output/tests/test_76_3/1_trim.wav	null	58.1597000000000008	2	f	59	7086	\N	55.7901999999999987
+../output/tests/test_76_3/4_trim.wav	null	70.8134000000000015	5	f	59	7089	\N	68.352800000000002
+../output/tests/test_76_3/7_trim.wav	null	84.7934000000000054	8	f	59	7092	\N	81.8649999999999949
+../output/tests/test_76_3/8_trim.wav	null	88.4138999999999982	9	f	59	7093	\N	86.515199999999993
+../output/tests/test_77_2/0_trim.wav	null	152.712999999999994	1	f	239	7095	\N	150.012
+../output/tests/test_77_2/1_trim.wav	null	176.072000000000003	2	f	239	7096	\N	173.709000000000003
+../output/tests/test_77_2/2_trim.wav	null	182.759999999999991	3	f	239	7097	\N	178.876000000000005
+../output/tests/test_77_2/3_trim.wav	null	185.498999999999995	4	f	239	7098	\N	184.223000000000013
+../output/tests/test_77_2/4_trim.wav	null	189.241000000000014	5	f	239	7099	\N	186.276999999999987
+../output/tests/test_77_2/6_trim.wav	null	199.548000000000002	7	f	239	7101	\N	196.61099999999999
+../output/tests/test_77_2/7_trim.wav	null	203.057999999999993	8	f	239	7102	\N	201.162000000000006
+../output/tests/test_78_2/4_trim.wav	null	261.130999999999972	5	f	99	7109	\N	259.447999999999979
+../output/tests/test_78_2/5_trim.wav	null	264.196000000000026	6	f	99	7110	\N	262.593000000000018
+../output/tests/test_78_2/6_trim.wav	null	268.697000000000003	7	f	99	7111	\N	265.863999999999976
+../output/tests/test_78_2/8_trim.wav	null	280.800000000000011	9	f	99	7113	\N	278.84899999999999
+../output/tests/test_78_2/9_trim.wav	null	287.853000000000009	10	f	99	7114	\N	285.850999999999999
+../output/tests/test_79_2/6_trim.wav	null	401.769000000000005	7	f	169	7121	\N	399.853000000000009
+../output/tests/test_79_2/7_trim.wav	null	405.411000000000001	8	f	169	7122	\N	403.84899999999999
+../output/tests/test_80_1/2_trim.wav	null	464.714999999999975	3	f	199	7127	\N	462.699999999999989
+../output/tests/test_80_1/5_trim.wav	null	477.149999999999977	6	f	199	7130	\N	473.274999999999977
+../output/tests/test_80_1/7_trim.wav	null	483.718000000000018	8	f	199	7132	\N	482.461000000000013
+../output/tests/test_80_1/8_trim.wav	null	492.838000000000022	9	f	199	7133	\N	489.86099999999999
+../output/tests/test_80_1/9_trim.wav	null	496.790999999999997	10	f	199	7134	\N	494.420000000000016
+../output/tests/test_8_t/0_o.wav	null	216.819999999999993	1	t	22	7225	\N	213.790999999999997
+../output/tests/test_8_t/3_o.wav	null	234.960000000000008	4	t	22	7228	\N	231.907000000000011
+../output/tests/test_8_t/5_o.wav	null	249.217000000000013	6	t	22	7230	\N	247.544000000000011
+../output/tests/test_8_t/6_o.wav	null	266.985000000000014	7	f	22	7231	\N	263.997000000000014
+../output/tests/test_8_t/8_o.wav	null	282.189000000000021	9	t	22	7233	\N	280.593000000000018
+../output/tests/test_9_t/3_o.wav	null	471.196000000000026	4	t	17	7328	\N	468.350999999999999
+../output/tests/test_9_t/4_o.wav	null	480.153999999999996	5	t	17	7329	\N	478.211000000000013
+../output/tests/test_9_t/6_o.wav	null	492.713999999999999	7	t	17	7331	\N	491.117999999999995
+../output/tests/test_9_t/7_o.wav	null	501.23599999999999	8	t	17	7332	\N	499.23599999999999
+\.
+
+
+--
+-- Data for Name: q_times; Type: TABLE DATA; Schema: public; Owner: tiziano
+--
+
+COPY public.q_times ("time", question_id, test_id, "position") FROM stdin;
+250.185000000000002	16	2	1
+252.748999999999995	20	2	2
+271.019000000000005	13	2	4
+280.557000000000016	14	2	5
+283.267999999999972	15	2	6
+292.959000000000003	7	2	8
+299.959000000000003	5	2	9
+2228.86000000000013	4	3	0
+2232.73999999999978	1	3	1
+2242.05000000000018	16	3	3
+2245.28999999999996	15	3	4
+2248.36999999999989	7	3	5
+2256.38000000000011	22	3	7
+2271.28999999999996	20	3	8
+2275.05000000000018	21	3	9
+233.230999999999995	8	4	1
+239.805000000000007	19	4	2
+246.466000000000008	13	4	3
+250.711999999999989	11	4	4
+262.27800000000002	16	4	6
+267.278999999999996	15	4	7
+271.29000000000002	2	4	8
+697.421000000000049	2	5	0
+702.678999999999974	15	5	1
+707.903999999999996	16	5	2
+714.823999999999955	22	5	4
+720.597999999999956	1	5	5
+726.914999999999964	6	5	6
+731.576999999999998	20	5	7
+744.913000000000011	21	5	9
+792.405999999999949	2	6	0
+797.219000000000051	19	6	1
+806.354000000000042	18	6	3
+813.27800000000002	16	6	4
+819.278999999999996	15	6	5
+829.533999999999992	1	6	7
+834.796000000000049	9	6	8
+838.744000000000028	13	6	9
+490.201999999999998	3	7	0
+505.653999999999996	12	7	2
+510.937000000000012	13	7	3
+514.941000000000031	9	7	4
+539.450000000000045	16	7	8
+542.265999999999963	19	7	9
+21.0701000000000001	9	8	0
+24.2863000000000007	20	8	1
+28.9620999999999995	7	8	2
+34.1171999999999969	14	8	3
+47.0497000000000014	22	8	4
+51.7306000000000026	17	8	5
+58.1409999999999982	5	8	6
+65.117999999999995	13	8	7
+78.1102000000000061	11	8	9
+585.008000000000038	1	9	0
+594.089000000000055	4	9	1
+621.903999999999996	16	9	3
+626.364000000000033	21	9	4
+631.529999999999973	8	9	5
+637.908999999999992	12	9	6
+649.93100000000004	7	9	8
+655.913000000000011	13	9	9
+936.246999999999957	10	10	0
+946.671000000000049	8	10	2
+951.038000000000011	3	10	3
+955.994000000000028	21	10	4
+966.274000000000001	11	10	6
+970.280999999999949	14	10	7
+973.734000000000037	15	10	8
+977.58299999999997	16	10	9
+793.986999999999966	4	11	1
+798.460000000000036	22	11	2
+803.022000000000048	10	11	3
+811.254999999999995	13	11	5
+814.918999999999983	20	11	6
+822.903999999999996	16	11	7
+834.500999999999976	1	11	9
+1859.05999999999995	15	12	0
+1887.48000000000002	5	12	1
+1892.74000000000001	16	12	2
+1904.27999999999997	12	12	4
+1908.29999999999995	1	12	5
+1914.95000000000005	14	12	6
+1937.28999999999996	10	12	8
+1964.28999999999996	8	12	9
+669.316000000000031	15	13	0
+712.491999999999962	12	13	2
+715.620000000000005	4	13	3
+728.214000000000055	6	13	4
+732.458999999999946	18	13	5
+738.291000000000054	2	13	6
+745.27800000000002	16	13	7
+751.291000000000054	20	13	8
+755.947000000000003	14	13	9
+1382.26999999999998	5	14	1
+1387.73000000000002	13	14	2
+1390.90000000000009	7	14	3
+1400.90000000000009	16	14	5
+1404.26999999999998	6	14	6
+1410.91000000000008	4	14	7
+1414.88000000000011	20	14	8
+341.281999999999982	5	15	0
+351.649999999999977	16	15	1
+359.879000000000019	13	15	2
+366.418000000000006	14	15	4
+374.886000000000024	21	15	5
+378.500999999999976	9	15	6
+400.040999999999997	10	15	8
+135.343999999999994	15	16	6
+161.575999999999993	1	19	2
+2006.03999999999996	5	26	0
+510.915999999999997	19	17	9
+144.119	13	20	5
+149.115000000000009	15	20	6
+153.128999999999991	2	20	7
+163.59899999999999	10	20	9
+20.5606000000000009	7	21	0
+26.3487000000000009	18	21	1
+36.2674000000000021	14	21	3
+39.9183000000000021	15	21	4
+42.9637000000000029	16	21	5
+46.3575000000000017	2	21	6
+62.3599999999999994	3	21	8
+71.3584000000000032	6	21	9
+213.790999999999997	3	22	0
+221.722000000000008	11	22	2
+231.907000000000011	1	22	3
+236.967999999999989	9	22	4
+263.997000000000014	22	22	6
+271.920999999999992	8	22	7
+280.593000000000018	16	22	8
+283.915999999999997	19	22	9
+579.294999999999959	10	23	1
+583.658000000000015	20	23	2
+587.702999999999975	16	23	3
+595.033000000000015	17	23	5
+600.950000000000045	1	23	6
+605.014999999999986	2	23	7
+639.936000000000035	14	23	9
+1653.90000000000009	9	24	0
+1658.98000000000002	17	24	1
+1663.63000000000011	14	24	2
+1674.17000000000007	7	24	4
+1681.26999999999998	11	24	5
+1684.22000000000003	16	24	6
+1694.03999999999996	19	24	8
+1702.28999999999996	2	24	9
+870.229000000000042	15	25	0
+878.822999999999979	16	25	2
+881.919999999999959	19	25	3
+885.66700000000003	11	25	4
+888.908999999999992	12	25	5
+900.918999999999983	6	25	7
+910.913999999999987	4	25	8
+914.921000000000049	1	25	9
+2012.61999999999989	17	26	1
+2018.29999999999995	18	26	2
+2024.15000000000009	16	26	3
+2033.48000000000002	22	26	5
+2038.27999999999997	15	26	6
+2043.28999999999996	6	26	7
+2047.8599999999999	8	26	8
+2065.26999999999998	11	26	9
+1184.91000000000008	2	27	0
+1189.6099999999999	16	27	1
+1200.29999999999995	17	27	2
+1205.53999999999996	15	27	3
+1208.6099999999999	10	27	4
+1213.58999999999992	18	27	5
+1218.91000000000008	13	27	6
+1222.65000000000009	14	27	7
+1226.92000000000007	6	27	8
+1248.92000000000007	1	27	9
+142.370000000000005	16	28	0
+146.551999999999992	7	28	1
+161.955999999999989	6	28	3
+166.311000000000007	5	28	4
+172.39500000000001	18	28	5
+188.294999999999987	3	28	7
+193.282000000000011	13	28	8
+204.275000000000006	11	28	9
+2095.98000000000002	2	29	1
+2101.94000000000005	4	29	2
+2106.19999999999982	9	29	3
+2110.2800000000002	15	29	4
+2118.92000000000007	14	29	6
+2122.28999999999996	17	29	7
+2127.2800000000002	13	29	8
+337.442999999999984	18	30	0
+344.824000000000012	7	30	1
+350.97399999999999	16	30	2
+366.278999999999996	15	30	4
+369.942999999999984	22	30	5
+376.295000000000016	1	30	6
+383.29000000000002	2	30	7
+394.283000000000015	12	30	9
+1515.95000000000005	2	31	0
+1520.6099999999999	12	31	1
+1527.71000000000004	16	31	3
+1531.06999999999994	6	31	4
+1535.51999999999998	15	31	5
+1542.6400000000001	21	31	7
+1547.28999999999996	13	31	8
+1553.29999999999995	18	31	9
+1041.47000000000003	15	32	0
+1052.44000000000005	4	32	2
+1063.01999999999998	6	32	3
+1067.25999999999999	18	32	4
+1078.77999999999997	13	32	6
+1082.28999999999996	10	32	7
+1087.27999999999997	12	32	8
+867.729000000000042	20	33	0
+873.095000000000027	4	33	1
+877.655999999999949	2	33	2
+881.722999999999956	19	33	3
+890.437000000000012	11	33	5
+894.278999999999996	15	33	6
+897.323999999999955	14	33	7
+910.293999999999983	10	33	9
+1413.29999999999995	2	34	0
+1418.70000000000005	15	34	1
+1425.00999999999999	5	34	3
+2157.09999999999991	19	39	1
+241.119	6	2	0
+263.233000000000004	21	2	3
+287.949999999999989	1	2	7
+2237.80000000000018	6	3	2
+2252.92000000000007	13	3	6
+228.26400000000001	6	4	0
+253.977000000000004	20	4	5
+282.295999999999992	1	4	9
+711.658000000000015	14	5	3
+738.919999999999959	8	5	8
+801.682999999999993	8	6	2
+826.274000000000001	11	6	6
+495.77800000000002	1	7	1
+518.592999999999961	14	7	5
+521.669999999999959	18	7	6
+531.440000000000055	15	7	7
+69.131299999999996	1	8	8
+2161.65000000000009	16	39	2
+2164.59999999999991	14	39	3
+2171.30000000000018	12	39	5
+2174.55999999999995	10	39	6
+2179.28999999999996	2	39	7
+2183.4699999999998	18	39	8
+749.903999999999996	9	40	0
+768.282000000000039	1	40	4
+774.451000000000022	19	40	5
+779.317999999999984	22	40	6
+784.926000000000045	11	40	7
+788.932000000000016	14	40	8
+793.932999999999993	13	40	9
+211.846000000000004	16	41	0
+215.312999999999988	8	41	1
+220.375	21	41	2
+224.657999999999987	5	41	3
+230.007000000000005	15	41	4
+233.067000000000007	4	41	5
+242.140999999999991	7	41	7
+248.519000000000005	17	41	8
+255.115000000000009	12	41	9
+811.697999999999979	15	42	1
+815.55499999999995	13	42	2
+818.941000000000031	2	42	3
+823.706999999999994	8	42	4
+834.932000000000016	14	42	6
+838.928999999999974	11	42	7
+841.682999999999993	21	42	8
+187.521999999999991	16	43	0
+199.066000000000003	17	43	1
+209.794999999999987	19	43	2
+226.365000000000009	12	43	4
+236.37700000000001	10	43	5
+247.570999999999998	22	43	6
+262.375999999999976	9	43	7
+286.887	3	43	9
+947.822000000000003	16	44	0
+951.05600000000004	8	44	1
+959.490000000000009	17	44	3
+963.908999999999992	12	44	4
+967.057000000000016	15	44	5
+977.92999999999995	18	44	7
+982.921000000000049	1	44	8
+991.908000000000015	13	44	9
+28.1132999999999988	16	45	0
+43.673099999999998	17	45	2
+47.7965000000000018	11	45	3
+50.8629000000000033	3	45	4
+71.9450999999999965	7	45	6
+82.7445000000000022	21	45	7
+86.8923000000000059	8	45	8
+616.519000000000005	18	9	2
+644.905999999999949	15	9	7
+942.912000000000035	12	10	1
+960.245000000000005	13	10	5
+788.611999999999966	7	11	0
+807.905999999999949	15	11	4
+828.92999999999995	18	11	8
+1897.92000000000007	18	12	3
+1920.28999999999996	21	12	7
+696.892000000000053	10	13	1
+1376.68000000000006	15	14	0
+1395.83999999999992	14	14	4
+1419.1400000000001	17	14	9
+363.173999999999978	15	15	3
+390.369000000000028	2	15	7
+405.958000000000027	18	15	9
+106.381	8	16	0
+111.433999999999997	14	16	1
+114.596000000000004	10	16	2
+119.066000000000003	17	16	3
+123.543999999999997	18	16	4
+130.355999999999995	2	16	5
+140.342999999999989	16	16	7
+147.22399999999999	22	16	8
+163.36099999999999	1	16	9
+443.555000000000007	15	17	0
+447.97399999999999	21	17	1
+452.843999999999994	8	17	2
+468.350999999999999	6	17	3
+478.211000000000013	13	17	4
+481.732000000000028	2	17	5
+491.117999999999995	16	17	6
+499.23599999999999	12	17	7
+502.427999999999997	3	17	8
+1290.77999999999997	19	18	0
+1295.53999999999996	16	18	1
+1298.78999999999996	4	18	2
+1302.8599999999999	1	18	3
+1307.41000000000008	15	18	4
+1310.76999999999998	22	18	5
+1315.32999999999993	11	18	6
+1318.19000000000005	20	18	7
+1325.93000000000006	10	18	8
+1337.92000000000007	8	18	9
+145.206999999999994	6	19	0
+150.088999999999999	5	19	1
+165.600999999999999	10	19	3
+173.269000000000005	15	19	4
+183.25200000000001	13	19	5
+190.045999999999992	14	19	6
+197.048000000000002	12	19	7
+201.955000000000013	18	19	8
+215.463999999999999	20	19	9
+125.569000000000003	16	20	0
+128.960000000000008	19	20	1
+133.324000000000012	21	20	2
+137.269000000000005	11	20	3
+140.11699999999999	12	20	4
+159.128999999999991	6	20	8
+32.4142999999999972	12	21	2
+52.3596000000000004	17	21	7
+218.176999999999992	14	22	1
+247.544000000000011	15	22	5
+576.43100000000004	15	23	0
+590.369000000000028	7	23	4
+631.953999999999951	13	23	8
+1668.49000000000001	22	24	3
+1688.56999999999994	15	24	7
+873.370999999999981	18	25	1
+893.92999999999995	7	25	6
+2028.22000000000003	1	26	4
+154.278999999999996	15	28	2
+178.294000000000011	19	28	6
+2091.80000000000018	10	29	0
+388.158000000000015	19	30	8
+1523.56999999999994	1	31	2
+1538.48000000000002	9	31	6
+886.293999999999983	22	33	4
+904.27800000000002	16	33	8
+1421.83999999999992	16	34	2
+1431.29999999999995	7	34	4
+1442.74000000000001	13	34	6
+1450.34999999999991	21	34	8
+1576.92000000000007	17	35	0
+1587.28999999999996	22	35	2
+1596.32999999999993	5	35	4
+1606.45000000000005	15	35	6
+1616.29999999999995	1	35	8
+558.200000000000045	20	36	0
+570.864000000000033	11	36	2
+581.30499999999995	1	36	4
+593.817999999999984	16	36	6
+608.865000000000009	21	36	8
+14.6714000000000002	18	37	0
+27.0118000000000009	4	37	2
+36.9354000000000013	15	37	4
+46.7449000000000012	22	37	6
+66.2866000000000071	9	37	8
+1017.75999999999999	9	38	0
+1025.26999999999998	15	38	2
+1032.58999999999992	19	38	4
+1040.77999999999997	1	38	6
+1049	14	38	8
+2151.92999999999984	8	39	0
+2167.94000000000005	15	39	4
+759.150999999999954	17	40	2
+237.02000000000001	13	41	6
+806.741999999999962	1	42	0
+271.58499999999998	2	43	8
+955.22199999999998	6	44	2
+969.918999999999983	2	44	6
+2116.26999999999998	11	29	5
+2132.28999999999996	20	29	9
+354.33499999999998	8	30	3
+1048.27999999999997	16	32	1
+1073.02999999999997	2	32	5
+1096.28999999999996	21	32	9
+1438.28999999999996	9	34	5
+1445.77999999999997	14	34	7
+1457.29999999999995	18	34	9
+1582.40000000000009	18	35	1
+1592.25999999999999	6	35	3
+1601.70000000000005	8	35	5
+1611.59999999999991	16	35	7
+1631.27999999999997	14	35	9
+565.517000000000053	2	36	1
+575.634000000000015	8	36	3
+586.552000000000021	15	36	5
+598.88900000000001	22	36	7
+613.287000000000035	9	36	9
+21.6490000000000009	10	37	1
+31.9800000000000004	19	37	3
+43.2777000000000029	16	37	5
+58.3293999999999997	13	37	7
+86.1373999999999995	5	37	9
+1022.01999999999998	16	38	1
+1028.51999999999998	21	38	3
+1036.92000000000007	3	38	5
+1044.75	6	38	7
+1053.92000000000007	22	38	9
+2203.28999999999996	1	39	9
+754.982999999999947	4	40	1
+763.918999999999983	8	40	3
+828.384000000000015	18	42	5
+846.25	6	42	9
+218.296999999999997	15	43	3
+35.0974999999999966	13	45	1
+55.0200999999999993	4	45	5
+97.4548000000000059	14	45	9
+\.
+
+
+--
+-- Data for Name: question_groups; Type: TABLE DATA; Schema: public; Owner: tiziano
+--
+
+COPY public.question_groups (id, "group") FROM stdin;
+1	Cup1
+2	Cup2
+3	Cup3
+4	Random
+5	NotFirst
+\.
+
+
+--
+-- Data for Name: questions; Type: TABLE DATA; Schema: public; Owner: tiziano
+--
+
+COPY public.questions (id, path_to_wav, group_id) FROM stdin;
+1	../Questions/Cup1/audio(16)	1
+2	../Questions/Cup1/audio(3)	1
+3	../Questions/Cup1/audio	1
+4	../Questions/Cup1/audio(6)	1
+5	../Questions/Cup1/audio(13)	1
+6	../Questions/Cup3/audio(5)	3
+7	../Questions/Cup3/audio(15)	3
+8	../Questions/Cup3/audio(2)	3
+9	../Questions/Cup3/audio(8)	3
+10	../Questions/Cup3/audio(18)	3
+11	../Questions/NotFirst/audio(9)	5
+12	../Questions/NotFirst/audio(10)	5
+13	../Questions/NotFirst/audio(1)	5
+14	../Questions/NotFirst/audio(12)	5
+15	../Questions/Random/audio	4
+16	../Questions/Random/audio(11)	4
+17	../Questions/Cup2/audio(17)	2
+18	../Questions/Cup2/audio(14)	2
+19	../Questions/Cup2/audio(1)	2
+20	../Questions/Cup2/audio(4)	2
+21	../Questions/Cup2/audio(7)	2
+22	../Questions/NotFirst/Q8	5
+\.
+
+
+--
+-- Data for Name: tests; Type: TABLE DATA; Schema: public; Owner: tiziano
+--
+
+COPY public.tests (id, path_to_media, ball_position, truth, number) FROM stdin;
+2	../output/tests/test_27_t	-1	t	27
+3	../output/tests/test_55_f	-1	f	55
+4	../output/tests/test_39_f	-1	f	39
+5	../output/tests/test_11_f	-1	f	11
+6	../output/tests/test_43_t	-1	t	43
+7	../output/tests/test_29_t	-1	t	29
+8	../output/tests/test_19_f	-1	f	19
+9	../output/tests/test_10_f	-1	f	10
+10	../output/tests/test_45_t	-1	t	45
+11	../output/tests/test_12_f	-1	f	12
+12	../output/tests/test_51_t	-1	t	51
+13	../output/tests/test_42_t	-1	t	42
+14	../output/tests/test_18_t	-1	t	18
+15	../output/tests/test_28_f	-1	f	28
+16	../output/tests/test_23_f	-1	f	23
+17	../output/tests/test_9_t	-1	t	9
+18	../output/tests/test_17_f	-1	f	17
+19	../output/tests/test_26_t	-1	t	26
+20	../output/tests/test_20_f	-1	f	20
+21	../output/tests/test_22_t	-1	t	22
+22	../output/tests/test_8_t	-1	t	8
+23	../output/tests/test_30_f	-1	f	30
+24	../output/tests/test_50_t	-1	t	50
+25	../output/tests/test_13_t	-1	t	13
+26	../output/tests/test_52_f	-1	f	52
+27	../output/tests/test_16_t	-1	t	16
+28	../output/tests/test_38_t	-1	t	38
+29	../output/tests/test_53_t	-1	t	53
+30	../output/tests/test_40_f	-1	f	40
+31	../output/tests/test_48_f	-1	f	48
+32	../output/tests/test_46_f	-1	f	46
+33	../output/tests/test_44_t	-1	t	44
+34	../output/tests/test_47_f	-1	f	47
+35	../output/tests/test_49_t	-1	t	49
+36	../output/tests/test_41_t	-1	t	41
+37	../output/tests/test_37_t	-1	t	37
+38	../output/tests/test_15_f	-1	f	15
+39	../output/tests/test_54_t	-1	t	54
+40	../output/tests/test_31_f	-1	f	31
+41	../output/tests/test_21_f	-1	f	21
+42	../output/tests/test_32_f	-1	f	32
+43	../output/tests/test_34_f	-1	f	34
+44	../output/tests/test_14_t	-1	t	14
+45	../output/tests/test_25_t	-1	t	25
+46	../output/tests/test_82_1	1	f	82
+289	../output/tests/test_60_t	-1	f	60
+59	../output/tests/test_76_3	3	f	76
+69	../output/tests/test_87_2	2	f	87
+79	../output/tests/test_81_1	1	f	81
+89	../output/tests/test_93_2	2	f	93
+99	../output/tests/test_78_2	2	f	78
+109	../output/tests/test_83_2	2	f	83
+119	../output/tests/test_86_3	3	f	86
+290	../output/tests/test_60_t	-1	f	60
+291	../output/tests/test_59_f	-1	f	59
+292	../output/tests/test_75_f	-1	f	75
+293	../output/tests/test_58_f	-1	f	58
+294	../output/tests/test_62_t	-1	f	62
+295	../output/tests/test_64_f	-1	f	64
+296	../output/tests/test_63_f	-1	f	63
+129	../output/tests/test_85_2	2	f	85
+297	../output/tests/test_72_f	-1	f	72
+298	../output/tests/test_66_f	-1	f	66
+299	../output/tests/test_74_f	-1	f	74
+300	../output/tests/test_71_f	-1	f	71
+301	../output/tests/test_70_f	-1	f	70
+302	../output/tests/test_67_t	-1	f	67
+303	../output/tests/test_65_f	-1	f	65
+304	../output/tests/test_68_f	-1	f	68
+305	../output/tests/test_73_t	-1	f	73
+139	../output/tests/test_92_2	2	f	92
+306	../output/tests/test_57_t	-1	f	57
+307	../output/tests/test_56_f	-1	f	56
+308	../output/tests/test_61_t	-1	f	61
+309	../output/tests/test_69_t	-1	f	69
+149	../output/tests/test_96_2	2	f	96
+159	../output/tests/test_91_1	1	f	91
+169	../output/tests/test_79_2	2	f	79
+179	../output/tests/test_95_3	3	f	95
+189	../output/tests/test_97_2	2	f	97
+199	../output/tests/test_80_1	1	f	80
+209	../output/tests/test_90_1	1	f	90
+219	../output/tests/test_101_1	1	f	101
+229	../output/tests/test_99_3	3	f	99
+239	../output/tests/test_77_2	2	f	77
+249	../output/tests/test_88_2	2	f	88
+259	../output/tests/test_98_3	3	f	98
+269	../output/tests/test_100_1	1	f	100
+279	../output/tests/test_84_3	3	f	84
+310	../output/tests/test_89_1	1	t	89
+\.
+
+
+--
+-- Name: answers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tiziano
+--
+
+SELECT pg_catalog.setval('public.answers_id_seq', 7334, true);
+
+
+--
+-- Name: question_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tiziano
+--
+
+SELECT pg_catalog.setval('public.question_groups_id_seq', 5, true);
+
+
+--
+-- Name: questions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tiziano
+--
+
+SELECT pg_catalog.setval('public.questions_id_seq', 22, true);
+
+
+--
+-- Name: tests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: tiziano
+--
+
+SELECT pg_catalog.setval('public.tests_id_seq', 310, true);
+
+
+--
+-- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.answers
+    ADD CONSTRAINT answers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: q_times q_times_pkey; Type: CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.q_times
+    ADD CONSTRAINT q_times_pkey PRIMARY KEY (question_id, test_id);
+
+
+--
+-- Name: question_groups question_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.question_groups
+    ADD CONSTRAINT question_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: questions question_pkey; Type: CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT question_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.tests
+    ADD CONSTRAINT tests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: answers answers_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.answers
+    ADD CONSTRAINT answers_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: answers answers_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.answers
+    ADD CONSTRAINT answers_test_id_fkey FOREIGN KEY (test_id) REFERENCES public.tests(id);
+
+
+--
+-- Name: q_times q_times_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.q_times
+    ADD CONSTRAINT q_times_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(id);
+
+
+--
+-- Name: q_times q_times_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.q_times
+    ADD CONSTRAINT q_times_test_id_fkey FOREIGN KEY (test_id) REFERENCES public.tests(id);
+
+
+--
+-- Name: questions questions_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tiziano
+--
+
+ALTER TABLE ONLY public.questions
+    ADD CONSTRAINT questions_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.question_groups(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+

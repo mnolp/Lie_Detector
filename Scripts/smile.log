@@ -1,0 +1,23 @@
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in SMILExtract : openSMILE starting!
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in SMILExtract : config file is: /home/tiziano/Desktop/Lie_Detector/opensmile-2.3.0/config/IS09_emotion.conf
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in cComponentManager : successfully registered 100 component types.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in instance 'lldsink' : No filename given, disabling this sink component.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in instance 'lldhtksink' : No filename given, disabling this sink component.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in instance 'lldarffsink' : No filename given, disabling this sink component.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in instance 'arffsink' : No filename given, disabling this sink component.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in instance 'htksink' : No filename given, disabling this sink component.
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in cComponentManager : successfully finished createInstances
+                                 (25 component instances were finalised, 1 data memories were finalised)
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in cComponentManager : starting single thread processing loop
+[ 23.06.2020 - 17:17:30 ]
+    (MSG) [2] in cComponentManager : Processing finished! System ran for 205 ticks.
